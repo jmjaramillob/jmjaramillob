@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Evaluación Criterio Política{% endblock %}
+{% block extra_css %}
+	<style>
+		.example-modal .modal {
+			position: relative;
+			top: auto;
+			bottom: auto;
+			right: auto;
+			left: auto;
+			display: block;
+			z-index: 1;
+		}
+
+		.example-modal .modal {
+			background: transparent !important;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+
+	<div class="row">
+		<!-- left column -->
+		<div class="col-md-6">
+			<!-- general form elements -->
+			<div class="box-header with-border">
+				<h3 class="box-title">Formulario de Políticas</h3>
+			</div>
+			{% if politicas or criterios %}
+				<form
+					class="form" method="POST"
+					id="evaluation_form"
+					action="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}">
+					{% csrf_token %}
+					<div class="widget-content">
+						<div class="box-body">
+
+							<table class="table table-bordered ">
+								<thead>
+								<tr>
+									<td></td>
+									{% for politica in politicas %}
+										<td>{{ politica.shortNameP }}</td>
+									{% endfor %}
+								</tr>
+								</thead>
+								<tbody>
+								{% for criterio in criterios %}
+									<tr>
+										<td>{{ criterio.shortNameC }}</td>
+										{% for politica in politicas %}
+											<td>
+												<div class="input-group">
+													<input
+														type="text"
+														name="content"
+														class="form-control example"
+														data-criterio="{{ criterio.id }}"
+														data-politica="{{ politica.id }}"
+														placeholder="Valor">
+													<span class="input-group-btn">
+														<button
+															type="button"
+															name="view"
+															id="view-btn"
+															class="btn btn-default"><i
+															class="fa fa-eye"></i>
+														</button>
+													</span>
+												</div>
+											</td>
+										{% endfor %}
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="box-footer">
+						<!-- Buttons -->
+						<div class="form-group">
+							<div class="col-lg-offset-3 col-lg-9">
+								<button type="submit" class="btn btn-success">
+									Agregar evaluación
+								</button>
+								<button type="button" class="btn btn-danger">Importar</button>
+								<button type="button" class="btn btn-default">Exportar</button>
+								<a
+									href="{% url 'multipol:detalle_estudio' estudio.id %}"
+									class="btn btn-default"><i
+									class="fa fa-arrow-circle-left"></i>Regresar
+								</a>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</form>
+			{% else %}
+				<h3>No existen criterios o políticas definidas</h3>
+			{% endif %}
+		</div>
+	</div>
+
+{% endblock %}
+{% block extra_js %}
+	<script>
+		var dataInput = document.querySelectorAll('.example');
+		var evaluacionesCP = [];
+
+		dataInput.forEach(function (value) {
+			value.addEventListener('blur', function (evt) {
+				var evaluacionCP = {
+					criterio: evt.target.dataset.criterio,
+					politica: evt.target.dataset.politica,
+					valoracionCP: evt.target.value
+				};
+				evaluacionesCP.push(evaluacionCP);
+			});
+		});
+
+
+
+		$('#evaluation_form').submit(function (evt) {
+			evt.preventDefault();
+			$.ajax({ // create an AJAX call...
+				data: {
+					csrfmiddlewaretoken: '{{ csrf_token }}',
+					content: JSON.stringify(evaluacionesCP)
+				}, // get the form data
+				type: "POST", // GET or POST
+				url: "{% url 'multipol:evaluacion_criterio_politica' estudio.id %}", // the file to call
+				success: function (response) { // on success..
+
+				}
+			});
+		});
+
+
+	</script>
+{% endblock %}

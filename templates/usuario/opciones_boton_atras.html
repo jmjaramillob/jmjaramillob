@@ -1,0 +1,33 @@
+{% if idProyecto %}
+    {% if idProyecto == '0' %}
+        <a class="btn btn-success" href="{% url 'proyecto:nuevo_proyecto' %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+    {% else %}
+        <a class="btn btn-success" href="{% url 'proyecto:editar_proyecto' idProyecto %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+    {% endif %}
+{% elif idEstudio %}
+    {% if tipo == 1 %}
+        {% if idEstudio == '0' %}
+            <a class="btn btn-success" href="{% url 'mactor:nuevo_estudio' proyecto.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% else %}
+            <a class="btn btn-success" href="{% url 'mactor:editar_estudio' idEstudio.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% endif %}
+    {% elif tipo == 2 %}
+        {% if idEstudio == '0' %}
+            <a class="btn btn-success" href="{% url 'entrevista:nuevo_estudio' proyecto.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% else %}
+            <a class="btn btn-success" href="{% url 'entrevista:editar_estudio' idEstudio.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% endif %}
+    {% elif tipo == 3 %}
+        {% if idEstudio == '0' %}
+            <a class="btn btn-success" href="{% url 'abaco:nuevo_estudio' proyecto.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% else %}
+            <a class="btn btn-success" href="{% url 'abaco:editar_estudio' idEstudio.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% endif %}
+    {% elif tipo == 4 %}
+        {% if idEstudio == '0' %}
+            <a class="btn btn-success" href="{% url 'brainstorming:nuevo_estudio' proyecto.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% else %}
+            <a class="btn btn-success" href="{% url 'brainstorming:editar_estudio' idEstudio.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+        {% endif %}
+    {% endif %}
+{% endif %}

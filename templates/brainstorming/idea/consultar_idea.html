@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if usuario != '' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <!-- Custom Tabs -->
+                          <div class="nav-tabs-custom">
+                            <ul class="nav nav-tabs">
+                              <li class="active"><a href="#tab_1" data-toggle="tab">Detalle de la idea</a></li>
+                              <li><a href="#tab_2" data-toggle="tab">Valoraciones de la idea</a></li>
+                            </ul>
+                            <div class="tab-content">
+                              <div class="tab-pane active" id="tab_1">
+                                   <div class="row">
+                                        <div class="col-md-12">
+                                                <div class="widget-content">
+                                                    <div class="padd">
+                                                            <hr/>
+                                                            <!-- Form starts.  -->
+                                                            <form class="form-horizontal" role="form" method="post">
+                                                            {% csrf_token %}
+
+                                                                <div class="row">
+                                                                    <div class="col-md-8 col-md-offset-1">
+                                                                        <div class="form-group">
+                                                                            <label class="control-label" style="text-align: left">Título</label>
+                                                                            <input class="form-control" type="text" readonly value="{{ idea.titulo }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-8 col-md-offset-1">
+                                                                        <div class="form-group">
+                                                                           <label class="control-label" style="text-align: left">Descripción</label>
+                                                                           <textarea class="form-control" rows="2" readonly>{{ idea.descripcion }}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-8 col-md-offset-1">
+                                                                        <div class="form-group">
+                                                                             <label class="control-label" style="text-align: left">Estado</label>
+                                                                                {% if idea.estado %}
+                                                                                    <input class="form-control" type="text" readonly value="Esta idea está en uso.">
+                                                                                {% else %}
+                                                                                    <input class="form-control" type="text" readonly value="Esta idea no está en uso.">
+                                                                                {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-8 col-md-offset-1">
+                                                                        <div class="form-group">
+                                                                             <label class="control-label" style="text-align: left">Fecha de registro</label>
+                                                                             <input class="form-control" type="text" readonly value="{{ idea.fecha }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </form>
+
+                                                    </div>
+                                                </div>
+                                        </div>
+                                   </div>
+                              </div>
+                              <!-- /.tab-pane -->
+                              <div class="tab-pane" id="tab_2">
+                                <div class="row" style="text-align: justify">
+                                    <div class="col-md-12">
+                                          <div class="box box-solid">
+                                            <!-- /.box-header -->
+                                            <div class="box-body">
+                                              <dl>
+                                                {% if valoraciones.count > 0 %}
+                                                    {% if usuario != 'EXPERTO' %}
+                                                        {% for valoracion in valoraciones %}
+                                                            <dt>
+                                                                <input type="text" style="background-color: {{ valoracion.valoracion.codigoColor }}"> - {{valoracion.valoracion.nombre}}</dt>
+                                                            <dd>{{ valoracion.justificacion }}</dd>
+                                                            <br>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        {% for valoracion in valoraciones %}
+                                                            <dt>{{ valoracion.fechaHora }}<br>
+                                                                <input type="text" style="background-color: {{ valoracion.valoracion.codigoColor }}"> - {{valoracion.valoracion.nombre}}</dt>
+                                                            <dd>{{ valoracion.justificacion }}</dd>
+                                                            <br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    <h4>No se han realizado valoraciones a esta idea.</h4>
+                                                {% endif %}
+                                              </dl>
+                                            </div>
+                                            <!-- /.box-body -->
+                                          </div>
+                                          <!-- /.box -->
+                                        </div>
+                                </div>
+                              </div>
+                              <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                          </div>
+                          <!-- nav-tabs-custom -->
+
+                    <div class="form-group">
+                        <div class="col-md-8 col-md-offset-3">
+                            <a class="btn btn-success" href="{% url 'abaco:ideas' idea.idEstudio_id %}" title="Lista de ideas"><i class="fa fa-arrow-left"></i> Atrás</a>
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+    {% if usuario != '' %}
+        {% if expertos %}
+		    <input hidden class="col-sm-1" type="number" name="idEstudio" value="0{{estudio.id}}">
+        {% else %}
+            <input hidden class="col-sm-1" type="number" name="idEstudio" value="{{estudio.id}}">
+        {% endif %}
+
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Histograma de Convergencias y Divergencias {{ numero_matriz }}MAO</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <br>
+            <div style="width: 75%">
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <script src="{% static 'js/jquery.min.js' %}"></script>
+
+            <script>
+            var idEstudio = $('input[name="idEstudio"]').val();
+            var positivos = []
+			var negativos = []
+            var lista_labels = []
+			// se obtienen los datos a graficar
+			$.ajax(
+                        {
+                            data : {'numero_matriz' : {{ numero_matriz }},
+                                    'estudio': idEstudio
+                                    },
+                            url: 'datos_caa_daa',
+                            type: 'get',
+                            success: function (data)
+                            {
+                                var object = JSON.parse(data);
+
+                                for(var i=0; i<object.labels.length; i++)
+                                {
+                                    lista_labels.push(object.labels[i]);
+                                    positivos.push(object.caa[i]);
+									negativos.push(object.daa[i]);
+                                }
+                                generar()
+                            },
+                             error: function()
+                             {
+                                 console.log("Error no se puede graficar")
+                             }
+                        });
+
+            // se asignan los valores a graficar
+			var barChartData = {
+				labels: lista_labels,
+				datasets: [{
+					label: 'Convergencias',
+					backgroundColor: 'rgba(54, 162, 235, 0.2)',
+					data: positivos
+				}, {
+					label: 'Divergencias',
+					backgroundColor: 'rgba(255,99,132,1)',
+					data: negativos
+				}]
+			};
+
+			// Funcion que genera la grafica
+			function generar () {
+				var ctx = document.getElementById("canvas").getContext("2d");
+				window.myBar = new Chart(ctx, {
+					type: 'bar',
+					data: barChartData,
+					options: {
+						title:{
+							display:true,
+							text: "Convergencias y Divergencias entre Actores"
+						},
+						tooltips: {
+							mode: 'index',
+							intersect: false
+						},
+						responsive: true,
+						scales: {
+							xAxes: [{
+								stacked: true,
+							}],
+							yAxes: [{
+								stacked: true
+							}]
+						}
+					}
+				});
+			};
+
+            </script>
+
+            <br>
+            {% if expertos %}
+                <div class="alert alert-info alert-dismissible">
+                     <br>
+                     <h4>Expertos en consenso = {{expertos}}</h4>
+                </div>
+            {% endif %}
+
+            <!--BOTONES ------------------------------------- -->
+
+             <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        {% if expertos %}
+                            <a class="btn btn-success" href="{% url 'mactor:consenso_caa_daa' estudio.id numero_matriz 1 %}" title="Matriz MID consenso"><i class="fa fa-arrow-left"></i> Atrás</a>
+                        {% else %}
+                            <a class="btn btn-success" href="{% url 'mactor:caa_daa' estudio.id numero_matriz %}" title="Matriz MID"><i class="fa fa-arrow-left"></i> Atrás</a>
+                        {% endif %}
+                        <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                    </div>
+             </div>
+
+            </div>
+            <!-- /.box-body -->
+
+            <!--INICIO MODAL AYUDA------------------------- -->
+
+		     <div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Histograma de Convergencias y Divergencias</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							<p>El presente diagrama visualiza el nivel de:<br>
+                                        <i class="fa fa-check"></i> Convergencias: que representa el número de objetivos
+                                        respecto a los cuales un par de actores tiene una actitud convergente, ya sea
+                                        favorable o desfavorable.<br>
+                                        <i class="fa fa-check"></i>Divergencias: que representa el número de
+                                        objetivos respecto de los cuales el par de actores tiene una actitud divergente.
+                                    </p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+          </div>
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- ChartJS -->
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+{% endblock %}

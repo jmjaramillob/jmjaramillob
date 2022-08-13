@@ -1,0 +1,61 @@
+
+
+<div class="row col-md-8 col-md-offset-1" style="margin-top: 10px">
+    <!-- -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{{ cant_tecnicas }}</h3>
+                <p>Técnicas en uso</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-list"></i>
+            </div>
+            <a data-toggle="modal" href="#modal_tecnicas" class="small-box-footer">Ver técnicas <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-aqua">
+            <div class="inner">
+                <h3>{{ cant_estudios }}</h3>
+                <p>Estudios</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-list"></i>
+            </div>
+            <a href="{% url 'proyecto:ver_estudios_proyecto' proyecto.id %}" class="small-box-footer">Ver estudios <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3>{{ proyecto.idCoordinadores.count }}</h3>
+                <p>Coordinadores</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-list"></i>
+            </div>
+            <a data-toggle="modal" href="#modal_coordinadores" class="small-box-footer">Ver coordinadores <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-yellow">
+            <div class="inner">
+                <h3>{{ proyecto.idExpertos.count }}</h3>
+                <p>Expertos</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-list"></i>
+            </div>
+            <a data-toggle="modal" href="#modal_expertos" class="small-box-footer">Ver expertos <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+</div>

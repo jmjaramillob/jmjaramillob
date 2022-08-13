@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if usuario != '' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Detalle alternativa de respuesta</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+										<!-- Form starts.  -->
+                                    <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Nombre alternativa</label>
+                                                    <input class="form-control" type="text" readonly value="{{ valorEscala.nombre }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{form.valor.errors}}
+                                                    <label class="control-label" style="text-align: left">Valor</label>
+                                                    <input class="form-control" type="text" readonly value="{{ valorEscala.valor }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Estado</label>
+                                                    {% if valorEscala.estado %}
+                                                        <input class="form-control" type="text" readonly value="Esta alternativa de respuesta está en uso.">
+                                                    {% else %}
+                                                        <input class="form-control" type="text" readonly value="Esta alternativa de respuesta no está en uso.">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Descripción</label>
+                                                    <textarea class="form-control" rows="2" readonly>{{ valorEscala.descripcion }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-8 col-md-offset-3">
+                                            <a class="btn btn-success" href="{% url 'entrevista:escala' valorEscala.idEstudio.id %}" title="Escala de Likert"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                        </div>
+                                    </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+

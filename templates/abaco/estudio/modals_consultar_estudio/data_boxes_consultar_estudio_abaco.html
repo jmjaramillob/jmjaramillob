@@ -1,0 +1,94 @@
+
+<div class="row col-md-8 col-md-offset-1" style="display: table-cell;vertical-align:middle">
+
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-red">
+            <div class="inner">
+                <h3>{{ ideas }}</h3>
+                <p>Ideas a evaluar</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-list"></i>
+            </div>
+            <a href="{% url 'abaco:ideas' estudio.id %}" class="small-box-footer">Ver ideas <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    {% if usuario != 'EXPERTO' %}
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ reglas }}</h3>
+                    <p>Reglas</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list"></i>
+                </div>
+                <a href="{% url 'abaco:reglas' estudio.id %}" class="small-box-footer">Ver reglas <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-purple">
+                <div class="inner">
+                    <h3>{{ sesiones.count }}</h3>
+                    <p>Sesiones</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list"></i>
+                </div>
+                <a href="{% url 'abaco:sesiones' estudio.id %}" class="small-box-footer">Ver sesiones <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+    {% endif %}
+    <!-- -->
+    <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-orange">
+            <div class="inner">
+                <h3>{{ valoraciones }}</h3>
+                <p>Valoraciones</p>
+            </div>
+            <div class="icon">
+                <i class="fa fa-list"></i>
+            </div>
+            <a href="{% url 'abaco:valoraciones' estudio.id %}" class="small-box-footer">Ver valoraciones <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- -->
+    {% if usuario != 'EXPERTO' %}
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    <h3>{{ estudio.idCoordinadores.count }}</h3>
+                    <p>Coordinadores</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list"></i>
+                </div>
+                <a data-toggle="modal" href="#modal_coordinadores" class="small-box-footer">Ver coordinadores <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ estudio.idExpertos.count }}</h3>
+                    <p>Expertos</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-list"></i>
+                </div>
+                <a data-toggle="modal" href="#modal_expertos" class="small-box-footer">Ver expertos <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    {% endif %}
+    <!-- ./col -->
+</div>

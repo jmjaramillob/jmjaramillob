@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+    <style>
+        input { text-align: center; width: 60px; }
+        .celda_gris { background-color: #5e5e5e; color: white;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if usuario != '' %}
+        {% if consenso and usuario == 'EXPERTO' %}
+            <h2>No cuenta con permisos para acceder a esta página.</h2>
+        {% else %}
+            <div class="box">
+                <div class="box-header">
+                    {% if consenso %}
+                        <h3 class="box-title">CONSENSO - Coeficientes de Fuerza de los actores</h3>
+                    {% else %}
+                        <h3 class="box-title">Ri-Qi - Coeficientes de Fuerza de los actores</h3>
+                    {% endif %}
+
+                    <div class="pull-right">
+                        {% if fila_ri and fila_qi %}
+                            <select name="graficos_ri" class="form-control" onchange="location = this.value;">
+                                <option value="">Análisis Ri-Qi</option>
+                                {% if consenso %}
+                                    <option value="{% url 'mactor:consenso_mid' estudio.id 9 %}">Histograma Ri-Qi</option>
+                                {% else %}
+                                    <option value="{% url 'mactor:histograma_ri' estudio.id %}">Histograma Ri-Qi</option>
+                                {% endif %}
+                            </select>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body">
+
+                    <table class="table table-bordered" id="tabla_ri">
+                        <thead>
+                            {% if actores %}
+                                <tr>
+                                    <input class="celda_gris" type="text" value="">
+                                    {% for actor in actores %}
+                                        <input name="actor{{actor.id}}" class="celda_gris" title="{{actor.nombreLargo|upper}}"
+                                                       value="{{actor.nombreCorto}}" data-toggle="modal" href="#modal_ConsultarActor">
+                                    {% endfor %}
+                                    <br>
+                                </tr>
+                            {% endif %}
+                        </thead>
+                        <tbody>
+                            {% if fila_ri and fila_qi %}
+                                {% for celda in fila_ri %}
+                                    {% if celda.posicion == 0 %}
+                                        <input class="celda_gris" title="{{celda.descripcion|upper}}" value="{{celda.valor}}">
+                                    {% else %}
+                                            <input type="text" value="{{celda.valor}}" title="{{celda.descripcion}}">
+                                    {% endif %}
+                                {% endfor %}
+                                <br>
+                                {% for celda in fila_qi %}
+                                    {% if celda.posicion == 0 %}
+                                        <input class="celda_gris" title="{{celda.descripcion|upper}}" value="{{celda.valor}}">
+                                    {% else %}
+                                            <input type="text" value="{{celda.valor}}" title="{{celda.descripcion}}">
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <h3>Finalice el registro de las influencias directas para visualizar los coeficientes de fuerza.</h3>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    <br>
+                    {% if consenso %}
+                        <div class="alert alert-info alert-dismissible">
+                             <br>
+                             <h4>Expertos en consenso = {{expertos}}</h4>
+                        </div>
+                    {% endif %}
+                    <br>
+
+
+                <!--BOTONES ------------------------------ -->
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-8">
+                            <a class="btn btn-success" href="{% url 'mactor:influenciasMID' estudio.id %}" title="Influencias directas"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            <a class="btn btn-primary" data-toggle="modal" href="#modalAyuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                        </div>
+                    </div>
+
+                <!--MODAL CONSULTAR ACTOR--------------- -->
+
+                {% include 'mactor/actor/modal_detalle_actor.html' %}
+
+                 <!--MODAL AYUDA------------------------- -->
+
+                <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                  <h4 class="modal-title">Ayuda - Coeficientes de fuerza</h4>
+                              </div>
+                              <div class="modal-body" style="text-align: justify">
+                                <p>El coeficiente Ri, representa las relaciones de fuerza existentes entre los
+                                actores y permite diferenciar a los actores según su mayor o menor capacidad
+                                para condicionar las actuaciones de los demás, al igual que su mayor o menor
+                                dependencia respecto a ellos (Castro y Perestrelo, 2000).</p>
+                            <p>
+                                Los actores con coeficiente ri mayor poseen una débil o nula dependencia respecto
+                                a los otros actores y por lo tanto corresponden a los actores clave
+                                del estudio, ya que ejercen mayor influencia por su poder o liderazgo.
+                            </p>
+                            <p>
+                                El coeficiente Qi cumple la misma función que Ri solo que es calculado a partir de
+                                la Matriz de Máxima Influencia Directa e Indirecta, mientras que para Ri se utiliza MIDI. El
+                                objetivo de visualizar estos dos coeficientes en una misma interfaz es facilitar la comparación
+                                de sus resultados.
+                            </p>
+
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                </div>
+                <!-- /.box-body -->
+              </div>
+        {% endif %}
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/mactor/consultar_actor_objetivo_matriz.js'%}"></script>
+    <script>
+        $('input').attr('readonly', true);
+    </script>
+{% endblock %}

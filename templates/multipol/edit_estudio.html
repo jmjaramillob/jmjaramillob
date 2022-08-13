@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block extra_css %}
+	<!-- bootstrap datepicker -->
+	<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/select2/css/select2.min.css' %}">
+{% endblock %}
+{% block title %}
+	Editar estudio
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<!-- left column -->
+		<div class="col-md-6">
+			<!-- general form elements -->
+			<div class="box-header with-border">
+				<h3 class="box-title">Formulario para editar estudios</h3>
+			</div>
+			<!-- /.box-header -->
+			<!-- form start -->
+
+			<!-- Form starts.  -->
+			<form class="" role="form" method="post">
+				<div class="form-group">
+					<div class="box-body">
+						{% csrf_token %}
+						<div class="form-group">
+							{% crispy form %}
+
+							{#							<label>Date:</label>#}
+							{#							<div class="input-group date">#}
+							{#								<div class="input-group-addon">#}
+							{#									<i class="fa fa-calendar"></i>#}
+							{#								</div>#}
+							{#								<input type="text" class="form-control pull-right"#}
+							{#								       id="datepicker">#}
+							{#							</div>#}
+							<!-- /.input group -->
+						</div>
+						<!-- /.form group -->
+
+						{#						<label>#}
+						{#							<select>#}
+						{#								{% for user in users %}#}
+						{#									<option>#}
+						{#										{{ user.user.username }}#}
+						{#									</option>#}
+						{#								{% endfor %}#}
+						{#							</select>#}
+						{#							<button><i class="fa fa-plus"></i></button>#}
+						{#							<input type="text" name="nombre_estudio"/>#}
+						{#						</label>#}
+					</div>
+					<div class="box-footer">
+						<button type="submit" class="btn btn-success">Guardar estudio</button>
+						<a href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto.id %}">
+							<button type="button" class="btn btn-primary">Regresar</button>
+						</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div><!-- Finaliza la sección del formulario -->
+
+{% endblock %}
+{% block extra_js %}
+	<!-- bootstrap datepicker -->
+	<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+	<!-- Select2 -->
+	<script
+		src="{% static '/js/select2/js/select2.full.min.js' %}">
+	</script>
+	<script>
+		$(function () {
+			//Inicialización de select2
+			$('.select2').select2();
+			//Date picker
+			$('#id_fecha_inicio').datepicker({
+				autoclose: true,
+				sideBySide: true,
+          		format: 'dd/mm/yyyy',
+          		startDate: '{{ hoy|date:"d/m/Y"}}'
+			});
+			$('#id_fecha_final').datepicker({
+				autoclose: true,
+				sideBySide: true,
+          		format: 'dd/mm/yyyy',
+          		startDate: '{{ hoy|date:"d/m/Y"}}'
+			});
+		})
+
+
+	</script>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Listas de Políticas{% endblock %}
+{% block breadcrumbs %}Home/Políticas{% endblock %}
+{% block content %}
+
+	<div class="alert-msg">
+
+	</div>
+	<div class="box box-warning">
+		<div class="widget wblue">
+			<div class="box-header with-border">
+				<h3 class="box-title">Políticas</h3>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				{% if politicas %}
+					<table class="table table-bordered ">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Nombre Corto</th>
+							<th>Nombre largo</th>
+							<th>Descripción</th>
+							<th>Funciones</th>
+						</tr>
+						</thead>
+						<tbody class="content-politicas">
+						{% for politica in politicas %}
+
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ politica.shortNameP }}</td>
+								<td>{{ politica.longNameP }}</td>
+								<td>{{ politica.descriptionP }}</td>
+								<td>
+									<a class="btn btn-warning"
+									   name="{{ politica.id }}"
+									   title="Editar"
+									   href="{% url 'multipol:editar_politica' politica.id %}">
+										<i class="fa fa-pencil"></i>
+									</a>
+									<button
+										class="btn btn-danger"
+										title="Eliminar"
+										id="button_delete_politica"
+										name="boton_eliminar"
+										data-idpolitica="{{ politica.id }}"
+										data-toggle="modal"
+										data-target="#modal-delete-politica">
+										<i class="fa fa-trash"
+										   data-idpolitica="{{ politica.id }}"></i>
+									</button>
+								</td>
+							</tr>
+
+						{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<h3>No existen políticas en la base de datos, por favor ingrese
+						una nueva política</h3>
+				{% endif %}
+			</div>
+			<div class="box-footer">
+				<!-- Buttons -->
+				<div class="form-group">
+					<div class="col-lg-offset-3 col-lg-9">
+						<a href="{% url 'multipol:add_politica' estudio.id %}">
+							<button type="button" class="btn btn-success">Agregar
+								politica
+							</button>
+						</a>
+						<button type="button" class="btn btn-default">Importar
+						</button>
+						<button type="button" class="btn btn-default">Exportar
+						</button>
+						<a href="{% url 'multipol:detalle_estudio' estudio.id %}"
+						   class="btn btn-default"><i
+							class="fa fa-arrow-circle-left"> </i>Regresar</a>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+	<!-- MODAL ELIMINAR POLITICA -->
+	<div class="modal fade" id="modal-delete-politica">
+		{% include 'multipol/includes/politica_confirm_delete.html' %}
+	</div>
+	<!-- /.modal -->
+
+{% endblock %}
+
+{% block extra_js %}
+
+	<script>
+		//Script para borrar una política
+		var botones_delete = document.querySelectorAll("#button_delete_politica");
+		var id_politica_delete = [];
+		botones_delete.forEach(function (value) {
+			value.addEventListener('click', function (evt) {
+				id_politica_delete.push({id_politica: evt.target.dataset.idpolitica});
+
+			});
+
+		});
+
+		$('#confirm_delete_form').submit(function (evt) {
+			evt.preventDefault();
+
+			$.ajax({
+				data: {
+					csrfmiddlewaretoken: '{{ csrf_token }}',
+					content: JSON.stringify(id_politica_delete)
+				},
+				type: "POST",
+				url: "{% url 'multipol:borrar_politica' estudio.id %}",
+				success: function (data) {
+					$("#modal-delete-politica").modal("hide");
+					$(".alert-msg").html('' +
+						'<div class="alert alert-success alert-dismissible">\n' +
+						' <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;' +
+						' </button>\n' +
+						' <h4><i class="icon fa fa-check"></i> Alerta!</h4>\n' +
+						' Se eliminó la política seleccionada.\n' +
+						'</div>');
+
+					$(".content-politicas").html(data.html_data);
+				}
+			});
+		});
+	</script>
+{% endblock %}

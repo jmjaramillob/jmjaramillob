@@ -1,0 +1,35 @@
+<!-- /.box-header -->
+<div class="box-body">
+    <table id="tabla_destinatarios" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Última sesión</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for destinatario in mensaje.idDestinatarios.all|dictsort:"first_name" %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>
+                        {% if destinatario.id == mensaje.idProyecto.idAdministrador.id %}
+                            Administrador del proyecto
+                        {% elif destinatario in mensaje.idProyecto.idCoordinadores.all and user.id != mensaje.idProyecto.idAdministrador.id %}
+                            Coordinador del proyecto
+                        {% else %}
+                            {{ destinatario }}
+                        {% endif %}
+                    </td>
+                    <td>{{ destinatario.last_login }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- /.box-body -->
+
+
+
+
+

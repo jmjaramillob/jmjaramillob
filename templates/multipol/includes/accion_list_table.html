@@ -1,0 +1,23 @@
+{% for accion in acciones %}
+
+	<tr>
+		<td>{{ forloop.counter }}</td>
+		<td>{{ accion.shortNameA }}</td>
+		<td>{{ accion.longNameA }}</td>
+		<td>{{ accion.descriptionA }}</td>
+		<td>
+			<a class="btn btn-warning" name="{{ accion.id }}" title="Editar"
+			   href="{% url 'multipol:editar_accion' accion.id %}">
+				<i class="fa fa-pencil"></i>
+			</a>
+			<button class="btn btn-danger" title="Eliminar"
+			        id="button_delete_accion"
+			        name="boton_eliminar" data-idaccion="{{ accion.id }}"
+			        data-toggle="modal"
+			        data-target="#modal-delete-accion">
+				<i class="fa fa-trash" data-idaccion="{{ accion.id }}"></i>
+			</button>
+		</td>
+	</tr>
+
+{% endfor %}

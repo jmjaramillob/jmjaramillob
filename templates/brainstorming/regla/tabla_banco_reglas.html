@@ -1,0 +1,45 @@
+<div class="row">
+    <div class="col-md-8 col-md-offset-1">
+        <div class="form-group">
+            <p>
+                <a class="btn btn-primary" title="Actores registrados en plataforma" style="float: right; margin-top: 8px" data-toggle="collapse" href="#collapse_tabla_actores_registrados" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fa fa-bank"></i> Banco de actores
+                </a>
+            </p>
+            <br>
+            <br>
+            <div class="collapse" id="collapse_tabla_actores_registrados">
+                <div class="card card-body">
+                    {% if banco_actores %}
+                        <table id="tabla_actores_registrados" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre Largo</th>
+                                <th>Nombre Corto</th>
+                                <th>Descripción</th>
+                                <th>Consultar</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for actor in banco_actores %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{actor.nombreLargo}}</td>
+                                    <td style="width: 15%">{{actor.nombreCorto}}</td>
+                                    <td>{{actor.descripcion|truncatechars:20}}</td>
+                                    <td>
+                                        <a name="boton_consultar" onmouseout="limpiar()" id="{{actor.id}}" class="btn btn-primary" href="#modal_ConsultarActor" title="Ver" data-toggle="modal"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h3>No existen actores registrados</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

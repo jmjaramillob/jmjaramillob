@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if usuario != '' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-11" style="margin-top: 10px">
+                      <!-- Custom Tabs -->
+                      <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                          <li class="active"><a href="#tab_1" data-toggle="tab">Detalle de la valoración</a></li>
+                            {% if usuario != 'EXPERTO' %}
+                                <li><a href="#tab_2" data-toggle="tab">Otras valoraciones a la idea <span class="badge badge-primary">{{ otras_valoraciones.count }}</span></a></li>
+                            {% endif %}
+                          <li><a href="#tab_3" data-toggle="tab">Historial de cambios <span class="badge badge-primary">{{ cambios.count }}</span></a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="tab_1">
+                               <div class="row">
+                                    <div class="col-md-12">
+                                            <div class="widget-content">
+                                                <div class="padd">
+                                                        <hr/>
+                                                        <!-- Form starts.  -->
+                                                        <form class="form-horizontal" role="form" method="post">
+                                                        {% csrf_token %}
+
+                                                        <div class="row">
+                                                            <div class="col-md-8 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    <label class="control-label" style="text-align: left">Idea</label>
+                                                                    <input class="form-control" readonly value="{{ valoracion.idIdea.titulo }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-8 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    <label class="control-label" style="text-align: left">Valoración</label>
+                                                                    <input class="form-control" readonly value="{{ valoracion.valoracion.nombre }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-8 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    <label class="control-label" style="text-align: left">Justificación</label>
+                                                                    <textarea class="form-control" rows="2" readonly>{{ valoracion.justificacion }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                    </div>
+                               </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                        {% if usuario != 'EXPERTO' %}
+                          <div class="tab-pane" id="tab_2">
+                            <div class="row" style="text-align: justify">
+                                <div class="col-md-12">
+                                      <div class="box box-solid">
+                                        <div class="box-header with-border">
+                                            <i class="fa fa-list"></i>
+                                            <h3 class="box-title">Valoraciones de los expertos - {{ valoracion.idIdea.titulo }}</h3>
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                          <dl>
+                                            {% if otras_valoraciones.count > 0 %}
+                                                {% for otra in otras_valoraciones %}
+                                                    <dt>
+                                                        <input type="text" style="background-color: {{ otra.valoracion.codigoColor }}"> - {{otra.valoracion.nombre}}</dt>
+                                                    <dd>{{ otra.justificacion }}</dd>
+                                                    <br>
+                                                {% endfor %}
+                                            {% else %}
+                                                <h4>No se han realizado otras valoraciones a esta idea.</h4>
+                                            {% endif %}
+                                          </dl>
+                                        </div>
+                                        <!-- /.box-body -->
+                                      </div>
+                                      <!-- /.box -->
+                                    </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                          <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_3">
+                            <div class="row" style="text-align: justify">
+                                <div class="col-md-12">
+                                      <div class="box box-solid">
+                                        <div class="box-header with-border">
+                                            <i class="fa fa-list"></i>
+                                            <h3 class="box-title">Cambios registrados - {{ valoracion.idIdea.titulo }}</h3>
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                          <dl>
+                                            {% if cambios.count > 0 %}
+                                                {% for cambio in cambios %}
+                                                    <dt>{{ cambio.fechaHora }}<br>
+                                                        <input type="text" style="background-color: {{ cambio.valoracion.codigoColor }}"> - {{cambio.valoracion.nombre}}</dt>
+                                                    <dd>{{ cambio.justificacion }}</dd>
+                                                    <br>
+                                                {% endfor %}
+                                            {% else %}
+                                                <h4>No se han realizado cambios a la valoración de esta idea.</h4>
+                                            {% endif %}
+                                          </dl>
+                                        </div>
+                                        <!-- /.box-body -->
+                                      </div>
+                                      <!-- /.box -->
+                                    </div>
+                            </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                      </div>
+                      <!-- nav-tabs-custom -->
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-8 col-md-offset-3">
+                            {% if tipoAcceso == 'lista' %}
+                                <a class="btn btn-success" href="{% url 'abaco:valoraciones' valoracion.idIdea.idEstudio_id %}" title="Lista de valoraciones"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% else %}
+                                <a class="btn btn-success" href="{% url 'abaco:resultados' valoracion.idIdea.idEstudio_id %}" title="Resultados de las valoraciones"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+

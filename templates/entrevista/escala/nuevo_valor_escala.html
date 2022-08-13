@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if estudio.estado and usuario == 'COORDINADOR' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Nueva alternativa de respuesta</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+
+                                    {% include 'messages.html' %}
+
+                                    {% if rondas_activas == 0 %}
+										<!-- Form starts.  -->
+                                        <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{form.nombre.errors}}
+                                                    <label class="control-label" style="text-align: left">Nombre alternativa *</label>
+                                                    <input class="form-control" type="text" name="nombre" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{form.valor.errors}}
+                                                    <label class="control-label" style="text-align: left">Valor *</label>
+                                                    <select name="valor" class="form-control" required>
+                                                        <option value="" selected>----Seleccionar----</option>
+                                                        {% for valor in valores %}
+                                                            <option value="{{valor}}">{{valor}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label style="text-align: left"  class="control-label">Estado</label>
+                                                    {{ form.estado }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Descripción</label>
+                                                    <textarea class="form-control" rows="2" name="descripcion"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div  class="row">
+                                            <div class="col-md-3 col-md-offset-1" hidden>
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Estudio</label>
+                                                    <input class="form-control" type="text" value="{{estudio.id}}" name="idEstudio">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-8 col-md-offset-3">
+                                            <a class="btn btn-success" href="{% url 'entrevista:escala' estudio.id %}" title="Escala de Likert"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                            <a class="btn btn-primary" data-toggle="modal" href="#modalAyuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                                            <button type="submit" class="btn btn-primary" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+                                        </div>
+                                    </div>
+
+                                    </form>
+                                    {% else %}
+                                        <h3>No se puede agregar registros a la escala de Likert si existe una ronda en desarrollo.</h3>
+                                        <br>
+                                        <br>
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'entrevista:escala' estudio.id %}"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+            <!--MODAL AYUDA------------------------- -->
+
+		    <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Nueva alternativa de respuesta</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>
+                                  Para construir la escala de Likert del estudio, el coordinador debe llevar a cabo el
+                                  proceso de categorización de la misma, el cual consiste en el registro de afirmaciones
+                                  o juicios mediante los cuales se solicitará la reacción (favorable o desfavorable, positiva
+                                  o negativa) de los expertos. Aunque el número de opciones a cada ítem se recomienda que sea
+                                  5, también pueden ser 2, 3, 4, 7 o más.
+                              </p>
+                                <p>
+                                  Por lo general,  cuando el número de alternativas es de cinco, son presentadas como:
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-check"></i> Muy de acuerdo
+                                  <br>
+                                  <i class="fa fa-check"></i> De acuerdo
+                                  <br>
+                                  <i class="fa fa-check"></i> Indiferente o neutro
+                                  <br>
+                                  <i class="fa fa-check"></i> En desacuerdo
+                                  <br>
+                                  <i class="fa fa-check"></i> Muy en desacuerdo
+                                </p>
+                                <p>
+                                  En cuanto a los valores o puntajes de cada categoría de respuesta, lo más usual es asignar
+                                  una ponderación arbitraria, en la cual se pueden usar los números 1, 2, 3, 4, 5, o bien
+                                  2, 1, 0, -1, -2, para cada una de las categorías (muy de acuerdo [5], de acuerdo [4], etc).<br>
+                                  (García, 2011). Guía técnica para la construcción de escalas de actitud.
+                                </p>
+                                <p>
+                                  Nota 1: Mediante la plataforma se pueden ingresar valores enteros ubicados en el rango [-5, 5].
+                                  <br>
+                                  Nota 2: El estado indica si dicho valor de la escala podrá ser empleado en los juicios realizados por los expertos.
+                                </p>
+
+
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+

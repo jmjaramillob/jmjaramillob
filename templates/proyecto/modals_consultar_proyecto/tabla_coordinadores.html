@@ -1,0 +1,27 @@
+<!-- /.box-header -->
+<div class="box-body">
+    <table id="tabla_coordinadores" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Última sesión</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for coordinador in proyecto.idCoordinadores.all|dictsort:"first_name" %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{ coordinador }}</td>
+                    <td>{{ coordinador.last_login }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- /.box-body -->
+
+
+
+
+

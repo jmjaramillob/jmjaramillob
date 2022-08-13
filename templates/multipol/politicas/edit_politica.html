@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% block title %} Editar política {% endblock %}
+{% block content %}
+	<div class="box box-warning">
+		<div class="row">
+			<!-- left column -->
+			<div class="col-md-6">
+				<!-- general form elements -->
+				<div class="box-header with-border">
+					<h3 class="box-title">Formulario para modificar política</h3>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<!-- Form starts.  -->
+				<form class="form-inline" role="form"
+				      action="{% url 'multipol:editar_politica' politica.id %}"
+				      method="post">
+					<div class="form-group">
+						<div class="box-body">
+							{% csrf_token %}
+							{% crispy form %}
+						</div>
+						<div class="box-footer">
+							<button type="submit" class="btn btn-success">Guardar cambios
+							</button>
+							<a href="{{ politica.get_absolute_url }}"
+							   class="btn btn-primary">Regresar</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div><!-- Finaliza la sección del formulario -->
+	</div>
+{% endblock %}

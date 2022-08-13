@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+    <style>
+        #tabla_destinatarios th, td {text-align: center}
+    </style>
+ {% endblock%}
+
+
+
+{% block content %}
+    {% if usuario != '' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Detalle del mensaje</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+
+                                    <div class="jumbotron row col-md-10 col-md-offset-1">
+                                        	<!-- Form starts.  -->
+                                        <form class="form-horizontal" role="form" method="post">
+                                            {% csrf_token %}
+
+                                            <div class="row">
+                                                <p style="text-align: left">
+                                                    <span class="badge badge-primary">{{ mensaje.fechaHora }}</span>
+                                                </p>
+                                            </div>
+
+                                            <div class="row">
+                                                {% if mensaje.idEstudio != 0 %}
+                                                    {% if mensaje.tipoEstudio == 1 %}
+                                                        <input class="form-control" value="MACTOR - {{ mensaje.tituloEstudio|slice:":70"}}..." readonly>
+                                                    {% elif mensaje.tipoEstudio == 2 %}
+                                                        <input class="form-control" value="Entrevista - {{ mensaje.tituloEstudio|slice:":70"}}..." readonly>
+                                                    {% elif mensaje.tipoEstudio == 3 %}
+                                                        <input class="form-control" value="Ábaco de Regnier - {{ mensaje.tituloEstudio|slice:":70"}}..." readonly>
+                                                    {% elif mensaje.tipoEstudio == 4 %}
+                                                        <input class="form-control" value="Lluvia de Ideas - {{ mensaje.tituloEstudio|slice:":70"}}..." readonly>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <input class="form-control" value="Mensaje" readonly>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="row">
+                                                <textarea class="form-control" rows="7" style="background-color: white; text-align: justify" readonly>{{ mensaje.mensaje }}</textarea>
+                                            </div>
+
+                                        </form>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-8 col-md-offset-3">
+                                            <a class="btn btn-success" href="{% url 'proyecto:mensajes' mensaje.idProyecto_id %}" title="Mensajes del proyecto"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                            {% if mensaje.idEmisor.id == request.user.id  %}
+                                                <a class="btn btn-primary" title="Destinatarios del mensaje" data-toggle="modal" href="#modal_destinatarios">
+                                                    <i class="fa fa-users"></i> Destinatarios
+                                                </a>
+                                            {% endif %}
+                                            {% if mensaje.idEstudio > 0 %}
+                                                {% if mensaje.tipoEstudio == 1 %}
+                                                    <a class="btn btn-primary" href="{% url 'mactor:consultar_estudio' mensaje.idEstudio %}" title="Detalle del estudio"><i class="fa fa-eye"></i> Ver estudio</a>
+                                                {% elif mensaje.tipoEstudio == 2 %}
+                                                    <a class="btn btn-primary" href="{% url 'entrevista:consultar_estudio' mensaje.idEstudio %}" title="Detalle del estudio"><i class="fa fa-eye"></i> Ver estudio</a>
+                                                {% elif mensaje.tipoEstudio == 3 %}
+                                                    <a class="btn btn-primary" href="{% url 'abaco:consultar_estudio' mensaje.idEstudio %}" title="Detalle del estudio"><i class="fa fa-eye"></i> Ver estudio</a>
+                                                {% endif %}
+                                                <a class="btn btn-primary" href="{% url 'proyecto:mensajes_estudio' mensaje.idEstudio mensaje.tipoEstudio %}" title="Mensajes del estudio"><i class="fa fa-envelope"></i> Ver mensajes</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                        {% include 'proyecto/mensajes/modal_destinatarios.html' %}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_destinatarios').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10], [5, 10]]
+        })
+      })
+    </script>
+
+{% endblock %}
+
+

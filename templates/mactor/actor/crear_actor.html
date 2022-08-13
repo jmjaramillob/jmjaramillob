@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+    <style>
+        #tabla_estudios_registrados th, td {text-align: center}
+    </style>
+{% endblock%}
+
+{% block content %}
+    {% if estudio.estado and usuario != 'EXPERTO' and usuario != '' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Nuevo actor</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+
+                                    {% include 'messages.html' %}
+
+                                    {% if cant_actores < 15 %}
+										<!-- Form starts.  -->
+                                    <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                        {% include 'mactor/estudio/tabla_banco_estudios.html' %}
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{ form.nombreLargo|as_crispy_field }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{ form.nombreCorto|as_crispy_field }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{ form.descripcion|as_crispy_field }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div  class="row">
+                                            <div class="col-md-3 col-md-offset-1" hidden>
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Estudio</label>
+                                                    <input class="form-control" type="text" value="{{estudio.id}}" name="idEstudio">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'mactor:actores' estudio.id %}" title="Lista de actores"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                                <button type="submit" class="btn btn-primary" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    {% else %}
+                                        <h3>Ha alcanzado la cantidad máxima de actores por estudio.</h3>
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'mactor:actores' estudio.id %}" title="Lista de actores"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_estudios_registrados').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 50, -1], [5, 10, 50, "All"]],
+          'pageLength'  : 5
+        })
+      })
+    </script>
+    <script src="{% static 'js/mactor/importar_actores_banco_estudios_mactor.js' %}"></script>
+{% endblock %}
+
+

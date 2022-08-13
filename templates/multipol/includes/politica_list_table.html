@@ -1,0 +1,28 @@
+{% for politica in politicas %}
+	<tr>
+		<td>{{ forloop.counter }}</td>
+		<td>{{ politica.shortNameP }}</td>
+		<td>{{ politica.longNameP }}</td>
+		<td>{{ politica.descriptionP }}</td>
+		<td>
+			<a class="btn btn-warning"
+			   name="{{ politica.id }}"
+			   title="Editar"
+			   href="{% url 'multipol:editar_politica' politica.id %}">
+				<i class="fa fa-pencil"></i>
+			</a>
+			<button
+				class="btn btn-danger"
+				title="Eliminar"
+				id="button_delete_politica"
+				name="boton_eliminar"
+				data-idpolitica="{{ politica.id }}"
+				data-toggle="modal"
+				data-target="#modal-delete-politica">
+				<i class="fa fa-trash"
+				   data-idpolitica="{{ politica.id }}"></i>
+			</button>
+		</td>
+	</tr>
+
+{% endfor %}
