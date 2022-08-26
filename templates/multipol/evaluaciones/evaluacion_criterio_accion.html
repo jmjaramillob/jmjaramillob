@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
-{% load staticfiles %}
-{% block title %}Evaluación
-    Criterio Acción
-{% endblock %}
-{% block extra_css %}
+{% extends 'base.html' %} {% load staticfiles %} {% block title %}Evaluación
+Criterio Acción {% endblock %} {% block extra_css %}
 <style>
   .example-modal .modal {
     position: relative;
@@ -19,21 +15,22 @@
     background: transparent !important;
   }
 </style>
-{% endblock %} 
-{% block content %}
+{% endblock %} {% block content %}
 <div class="row">
   <!-- left column -->
   <div class="col-md-8">
     <!-- general form elements -->
+    
     <div class="box-header with-border">
       <h3 class="box-title">
         Tabla de evaluación de acciones respecto a criterios
       </h3>
     </div>
 
+    {% if user == estudio.idCoordinador %}
     <form method="post" id="evaluation_form" action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
       <div class="box-body">
-        {% if user.is_staff %}
+        
         <table class="table table-bordered">
           {% csrf_token %}
           <thead>
@@ -51,10 +48,23 @@
               {% for criterio in criterios %}
               <td>
                 <div class="input-group">
-                  <input type="text" name="q" class="form-control calificacion" data-criterio="{{ criterio.id }}"
-                         data-accion="{{ accion.id }}" placeholder="Valor" value="0" min="0"/>
+                  <input
+                    type="text"
+                    name="q"
+                    class="form-control calificacion"
+                    data-criterio="{{ criterio.id }}"
+                    data-accion="{{ accion.id }}"
+                    placeholder="Valor"
+                    value="0"
+                    min="0"
+                  />
                   <span class="input-group-btn">
-                    <button type="button" name="view" id="view-btn" class="btn btn-default" >
+                    <button
+                      type="button"
+                      name="view"
+                      id="view-btn"
+                      class="btn btn-default"
+                    >
                       <i class="fa fa-eye"></i>
                     </button>
                   </span>
@@ -65,7 +75,10 @@
             {% endfor %}
           </tbody>
         </table>
+
         {% else %}
+
+        {% if user in estudio.idExpertos.all %}
         <table class="table table-bordered">
           {% csrf_token %}
           <thead>
@@ -83,7 +96,6 @@
               {% for criterio in criterios %}
               <td>
                 <div class="input-group">
-                  
                   <span class="input-group-btn">
                     <button
                       type="button"
@@ -101,7 +113,7 @@
             {% endfor %}
           </tbody>
         </table>
-        {% endif %}
+        
       </div>
 
       <div class="box-footer">
@@ -123,6 +135,19 @@
         <div class="clearfix"></div>
       </div>
     </form>
+    {% else %}
+    <div class="box-body">
+      {{ estudio.idExpertos.id }}
+      <p> Usted no se encuentra registrado en este estudio </p>
+      <a
+            href="{% url 'multipol:detalle_estudio' estudio.id %}"
+            class="btn btn-default"
+          >
+            <i class="fa fa-arrow-circle-left"> </i>Regresar</a
+          >
+    </div>
+      {% endif %}
+    {% endif %}
   </div>
 </div>
 

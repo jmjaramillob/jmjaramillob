@@ -83,8 +83,9 @@ class UpdateEstudio(UpdateView):
   form_class = EstudioMultipolForm
   context_object_name = 'estudio'
 
+
   def form_valid(self, form):
-    messages.add_message(self.request, messages.SUCCESS, 'El estudio se edito con éxito')
+    messages.add_message(self.request, messages.SUCCESS, 'El estudio se editó con éxito')
     return super(UpdateEstudio, self).form_valid(form)
 
   def form_invalid(self, form):
@@ -92,9 +93,8 @@ class UpdateEstudio(UpdateView):
 
     response = super(UpdateEstudio, self).form_invalid(form)
     titulo = form.cleaned_data['titulo']
-
-    estudios_existentes = EstudioMultipol.objects.filter(
-      idProyecto=proyecto).order_by('titulo')
+    estudio = get_object_or_404(EstudioMultipol, id=self.kwargs['pk'])
+    estudios_existentes = EstudioMultipol.objects.filter(idProyecto=proyecto).order_by('titulo')
     estudios_existentes = estudios_existentes.exclude(id=estudio.id)
 
     if estudios_existentes.filter(titulo=titulo).count() > 0:
@@ -351,7 +351,7 @@ def evaluacion_criterio_accion(request, pk):
   #  evalt = EvaluacionTotalCA(estudio=estudio)
   acciones = Accion.objects.filter(estudio=estudio.id)
   criterios = Criterio.objects.filter(estudio=estudio.id)
-  experto = request.user
+  print(estudio.idExpertos.all)
   if request.method == 'POST' or request.is_ajax():
     data = json.loads(request.POST['content'])
     for i in data:
@@ -359,7 +359,7 @@ def evaluacion_criterio_accion(request, pk):
       criterio = Criterio.objects.get(pk=i['criterio'])
       valoracion = i['valoracionCA']
       evaluacionCA = EvaluacionCA(estudio=estudio, accion=accion, criterio=criterio,
-                                  valoracionCA=valoracion, idExperto=experto)
+                                  valoracionCA=valoracion)
 
       evaluacionCA.save()
     return index(request)

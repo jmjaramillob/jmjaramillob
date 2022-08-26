@@ -22,45 +22,81 @@
 			<!-- form start -->
 
 			<!-- Form starts.  -->
-			<form class="" role="form" method="post">
-				<div class="form-group">
-					<div class="box-body">
-						{% csrf_token %}
+			<!-- form start -->
+			<div class="box-body center-block">
+				<!-- Form starts.  -->
+				{% if request.user == estudio.idProyecto.idAdministrador %}
+					{% if estudio.idProyecto.estado %}
+					<form class="" role="form" method="post">
 						<div class="form-group">
-							{% crispy form %}
-
-							{#							<label>Date:</label>#}
-							{#							<div class="input-group date">#}
-							{#								<div class="input-group-addon">#}
-							{#									<i class="fa fa-calendar"></i>#}
-							{#								</div>#}
-							{#								<input type="text" class="form-control pull-right"#}
-							{#								       id="datepicker">#}
-							{#							</div>#}
-							<!-- /.input group -->
+							{% include 'messages.html' %}
+							{% csrf_token %}
+							<div class="col-md-8 col-md-offset-1 hidden">
+								{{ form.tipoTecnica|as_crispy_field }}
+							</div>
+							<p>
+								{{ form.titulo|as_crispy_field }}
+							</p>
+							<p>
+								{{ form.descripcion|as_crispy_field }}
+							</p>
+							<p>
+								{{ form.fecha_inicio|as_crispy_field }}
+							</p>
+							<p>
+								{{ form.fecha_final|as_crispy_field }}
+							</p>
+							<p>
+								<label>Coordinador</label>
+								<select name="idCoordinador" class="form-control" required
+										id="id_idCoordinador">
+									{% for coordinador in estudio.idProyecto.idCoordinadores.all %}
+										<option value="{{ coordinador.id }}">
+											{{ coordinador }}</option>
+									{% endfor %}
+								</select>
+							</p>
+							<p>
+								{{ form.idExpertos|as_crispy_field }}
+							</p>
+							<p>
+								<span style="color: red">
+									Nota: Al cumplirse la fecha de cierre del estudio, el estado
+									de este cambiará automáticamente a cerrado.
+								</span>
+								<br>
+								{{ form.estado|as_crispy_field }}
+							</p>
+						<p>
+								{{ form.dias_finalizacion_informe|as_crispy_field }}
+							</p>
+							<p>
+								<div class="col-md-8 col-md-offset-1 hidden">
+									{{form.idProyecto|as_crispy_field}}
+								</div>
+							</p>
+							<button type="submit" class="btn btn-success">
+								Guardar Cambios
+							</button>
+							<a
+								href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto_id %}">
+								<button type="button" class="btn btn-primary">Regresar
+								</button>
+							</a>
 						</div>
-						<!-- /.form group -->
+					</form>
+					{% else %}
+						<p> Este proyecto no se encuentra activo </p>
+					{% endif %}
+				{% else %}
+					No estás agregado en Ningun Estudio
 
-						{#						<label>#}
-						{#							<select>#}
-						{#								{% for user in users %}#}
-						{#									<option>#}
-						{#										{{ user.user.username }}#}
-						{#									</option>#}
-						{#								{% endfor %}#}
-						{#							</select>#}
-						{#							<button><i class="fa fa-plus"></i></button>#}
-						{#							<input type="text" name="nombre_estudio"/>#}
-						{#						</label>#}
-					</div>
-					<div class="box-footer">
-						<button type="submit" class="btn btn-success">Guardar estudio</button>
-						<a href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto.id %}">
-							<button type="button" class="btn btn-primary">Regresar</button>
-						</a>
-					</div>
-				</div>
-			</form>
+					<a href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto_id %}">
+						<button type="button" class="btn btn-primary">Regresar
+						</button>
+					</a>
+				{% endif %}
+			</div>
 		</div>
 	</div><!-- Finaliza la sección del formulario -->
 

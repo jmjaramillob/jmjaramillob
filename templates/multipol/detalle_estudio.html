@@ -1,7 +1,6 @@
 {% extends 'base.html' %} 
 {% load staticfiles %} 
-{% block title %} Multipol 
-{%endblock %} 
+{% block title %} Multipol{%endblock %} 
 {% block content %}
 
 <section class="content">
@@ -50,11 +49,7 @@
         <div class="icon">
           <i class="fa fa-clipboard"></i>
         </div>
-        <a
-          href="{% url 'multipol:lista_politica' estudio.id %}"
-          class="small-box-footer"
-          >Más información
-          <i class="fa fa-arrow-circle-right"></i>
+        <a href="{% url 'multipol:lista_politica' estudio.id %}" class="small-box-footer" >Más información <i class="fa fa-arrow-circle-right"></i>
         </a>
       </div>
     </div>
@@ -69,18 +64,14 @@
       <!-- small box -->
       <div class="small-box bg-aqua">
         <div class="inner">
-          <h3>Evaluacion de Acciones/Criterios</h3>
+          <h4>Evaluacion de Acciones/Criterios</h4>
 
           <p>Matriz de relaciones entre acciones y criterios</p>
         </div>
         <div class="icon">
           <i class="fa fa-table"></i>
         </div>
-        <a
-          href="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}"
-          class="small-box-footer"
-          >Más información <i class="fa fa-arrow-circle-right"></i
-        ></a>
+        <a href="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}" class="small-box-footer" >Más información <i class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -88,18 +79,14 @@
       <!-- small box -->
       <div class="small-box bg-green">
         <div class="inner">
-          <h3>Evaluacion de Políticas/Criterios</h3>
+          <h4>Evaluacion de Políticas/Criterios</h4>
 
           <p>Matriz de relaciones entre políticas y criterios</p>
         </div>
         <div class="icon">
           <i class="fa fa-table"></i>
         </div>
-        <a
-          href="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}"
-          class="small-box-footer"
-          >Más información <i class="fa fa-arrow-circle-right"></i
-        ></a>
+        <a href="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -107,22 +94,17 @@
       <!-- small box -->
       <div class="small-box bg-yellow">
         <div class="inner">
-          <h3>Evaluacion de Acciones/Políticas</h3>
+          <h4>Evaluacion de Acciones/Políticas</h4>
 
           <p>Matriz de relaciones entre acciones y políticas</p>
         </div>
         <div class="icon">
           <i class="fa fa-table"></i>
         </div>
-        <a
-          href="{% url 'multipol:evaluacion_accion_politica' estudio.id %}"
-          class="small-box-footer"
-          >Más información <i class="fa fa-arrow-circle-right"></i
-        ></a>
+        <a href="{% url 'multipol:evaluacion_accion_politica' estudio.id %}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
       </div>
       <div class="clearfix">
-        <a href="{% url 'proyecto:ver_estudios_proyecto' proyecto.id %}" class="btn btn-default"><i
-					class="fa fa-arrow-circle-left"> </i>Regresar</a>
+        <a href="{% url 'proyecto:ver_estudios_proyecto' proyecto.id %}" class="btn btn-default"><i class="fa fa-arrow-circle-left"> </i>Regresar</a>
       </div>
     </div>
     <!-- ./col -->
