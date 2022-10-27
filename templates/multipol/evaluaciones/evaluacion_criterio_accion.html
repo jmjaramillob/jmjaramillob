@@ -28,8 +28,10 @@ Criterio Acción {% endblock %} {% block extra_css %}
     </div>
 
     {% if user == estudio.idCoordinador %}
+    <div class="widget-content">
+    <div class="box-body">
     <form method="post" id="evaluation_form" action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
-      <div class="box-body">
+      
         
         <table class="table table-bordered">
           {% csrf_token %}
@@ -75,10 +77,12 @@ Criterio Acción {% endblock %} {% block extra_css %}
             {% endfor %}
           </tbody>
         </table>
-
+      </form>
         {% else %}
 
         {% if user in estudio.idExpertos.all %}
+        <div class="widget-content">
+          <div class="box-body">
         <table class="table table-bordered">
           {% csrf_token %}
           <thead>
@@ -94,20 +98,20 @@ Criterio Acción {% endblock %} {% block extra_css %}
             <tr>
               <td>{{ accion.shortNameA }}</td>
               {% for criterio in criterios %}
-              <td>
+              <td class="eval">
                 <div class="input-group">
                   <span class="input-group-btn">
-                    <button
-                      type="button"
-                      name="view"
-                      id="view-btn"
-                      class="btn btn-success"
-                    >
+                    <button type="button" name="boton-eval" id="{{ accion.id }}-{{ criterio.id }}" class="btn btn-success" data-toggle="modal" data-target="#modal-default">
+                      
                       <i class="fa fa-check"></i>
+                      
                     </button>
+                    
                   </span>
+                  
                 </div>
               </td>
+              
               {% endfor %}
             </tr>
             {% endfor %}
@@ -115,26 +119,23 @@ Criterio Acción {% endblock %} {% block extra_css %}
         </table>
         
       </div>
-
+      
       <div class="box-footer">
         <!-- Buttons -->
         <div class="col-lg-offset-3 col-lg-9">
           <button type="submit" id="guardar_eval" class="btn btn-success">
-            <i class="fa fa-save"> </i>Agregar evaluación
+            <i class="fa fa-save"> </i> Agregar evaluación
           </button>
           <button type="button" class="btn btn-danger">Importar</button>
           <button type="button" class="btn btn-default">Exportar</button>
-          <a
-            href="{% url 'multipol:detalle_estudio' estudio.id %}"
-            class="btn btn-default"
-          >
-            <i class="fa fa-arrow-circle-left"> </i>Regresar</a
-          >
+          <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
+            <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
         </div>
 
         <div class="clearfix"></div>
       </div>
-    </form>
+    </div>
+  </div>
     {% else %}
     <div class="box-body">
       {{ estudio.idExpertos.id }}
@@ -147,9 +148,13 @@ Criterio Acción {% endblock %} {% block extra_css %}
           >
     </div>
       {% endif %}
+
     {% endif %}
   </div>
+
 </div>
+
+ 
 
 {% endblock %} {% block extra_js %}
 <script>
@@ -191,6 +196,16 @@ Criterio Acción {% endblock %} {% block extra_css %}
       console.log(myInput);
     });
   };
+</script>
+
+<script> 
+  let accion;
+  let criterio;
+  let botones_eval = document.querySelectorAll('[name="boton-eval"]');
+  botones_eval.item(0).addEventListener("onClick", function(evt){
+    accion = botones_eval.item(0).attr('id');
+    console.log(accion)
+  });
 </script>
 
 <script>

@@ -351,7 +351,8 @@ def evaluacion_criterio_accion(request, pk):
   #  evalt = EvaluacionTotalCA(estudio=estudio)
   acciones = Accion.objects.filter(estudio=estudio.id)
   criterios = Criterio.objects.filter(estudio=estudio.id)
-  print(estudio.idExpertos.all)
+  contexto = {}   
+
   if request.method == 'POST' or request.is_ajax():
     data = json.loads(request.POST['content'])
     for i in data:
@@ -361,7 +362,7 @@ def evaluacion_criterio_accion(request, pk):
       evaluacionCA = EvaluacionCA(estudio=estudio, accion=accion, criterio=criterio,
                                   valoracionCA=valoracion)
 
-      evaluacionCA.save()
+    evaluacionCA.save()
     return index(request)
 
 
