@@ -59,9 +59,9 @@ LOCAL_APPS = [
     'apps.mactor',
     'apps.mapas_tecnologicos',
     'apps.micmac',
-    'apps.multipol',
     'apps.panel_expertos',
     'apps.smic',
+    'apps.multipolv1',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
