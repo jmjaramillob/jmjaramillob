@@ -4,7 +4,7 @@ from ..mactor.models import EstudioMactor
 from ..entrevista.models import EstudioEntrevista
 from ..abaco.models import EstudioAbaco
 from ..brainstorming.models import EstudioLluviaDeIdeas
-from ..multipol.models import EstudioMultipol
+from ..multipolv1.models import EstudioMultipol
 from django.views.generic import CreateView
 from .forms import UserRegistrationForm
 from django.core.urlresolvers import reverse_lazy, reverse

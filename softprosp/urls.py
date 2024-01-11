@@ -31,7 +31,7 @@ urlpatterns = [
   url(r'^brainstorming/',
       include('apps.brainstorming.urls', namespace="brainstorming")),
   url(r'^mactor/', include('apps.mactor.urls', namespace="mactor")),
-  url(r'^multipol/', include('apps.multipol.urls', namespace='multipol')),
+  url(r'^multipol/', include('apps.multipolv1.urls', namespace='multipol')),
   url(r'^extrapolacion', include('apps.extrapolacion_tendencias.urls',
                                  namespace='extrapolacion')),
   # urls vista control de usuarios paquete Registration redux

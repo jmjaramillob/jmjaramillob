@@ -1,10 +1,11 @@
+from audioop import mul
 from django.contrib.auth.models import User
 from .models import Proyecto, Mensaje
 from ..mactor.models import EstudioMactor
 from ..entrevista.models import EstudioEntrevista
 from ..abaco.models import EstudioAbaco
 from ..brainstorming.models import EstudioLluviaDeIdeas
-from ..multipol.models import EstudioMultipol
+from ..multipolv1.models import EstudioMultipol
 from .forms import FormProyecto, FormNotificacion
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, \
   DeleteView
@@ -205,6 +206,7 @@ def actualizar_roles_proyecto(idProyecto):
   mactor = EstudioMactor.objects.filter(idProyecto_id=idProyecto)
   entrevista = EstudioEntrevista.objects.filter(idProyecto_id=idProyecto)
   lluvia = EstudioLluviaDeIdeas.objects.filter(idProyecto_id=idProyecto)
+  multipol = EstudioMultipol.objects.filter(proyecto_id = idProyecto)
 
   def agregar_expertos(estudios):
 
@@ -229,6 +231,9 @@ def actualizar_roles_proyecto(idProyecto):
   if lluvia.count() > 0:
     agregar_expertos(lluvia)
 
+  # Estudios lluvia de ideas
+  if multipol.count() > 0:
+    agregar_expertos(multipol)
 
 # Determina el tipo de rol que ocupa el usuario actual dentro del proyecto
 
@@ -279,7 +284,7 @@ def obtener_estudios_proyecto(request, idProyecto):
 
   # estudios mulipol
   multipol = EstudioMultipol.objects.filter(
-    idProyecto_id=idProyecto).order_by('-estado', 'titulo')
+    proyecto_id=idProyecto).order_by('-estado', 'titulo')
 
   if mactor.count() > 0:
     actualizar_estudios(mactor)
