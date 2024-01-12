@@ -206,7 +206,7 @@ def actualizar_roles_proyecto(idProyecto):
   mactor = EstudioMactor.objects.filter(idProyecto_id=idProyecto)
   entrevista = EstudioEntrevista.objects.filter(idProyecto_id=idProyecto)
   lluvia = EstudioLluviaDeIdeas.objects.filter(idProyecto_id=idProyecto)
-  multipol = EstudioMultipol.objects.filter(proyecto_id = idProyecto)
+  multipol = EstudioMultipol.objects.filter(idProyecto_id = idProyecto)
 
   def agregar_expertos(estudios):
 
@@ -284,7 +284,7 @@ def obtener_estudios_proyecto(request, idProyecto):
 
   # estudios mulipol
   multipol = EstudioMultipol.objects.filter(
-    proyecto_id=idProyecto).order_by('-estado', 'titulo')
+    idProyecto_id=idProyecto).order_by('-estado', 'titulo')
 
   if mactor.count() > 0:
     actualizar_estudios(mactor)
