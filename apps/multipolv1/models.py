@@ -9,23 +9,23 @@ from django.contrib.auth.models import User
 class EstudioMultipol(models.Model):
   titulo = models.CharField(max_length=25, verbose_name="Título")
   descripcion = models.TextField(max_length=200, verbose_name="Descripción")
-  proyecto = models.ForeignKey(Proyecto, null=True, on_delete=models.CASCADE, related_name="proyecto_estudio_multipol")
-  tipo_tecnica = models.ForeignKey(Tecnica, null=True, related_name='tecnica_estudio_multipol')
+  idProyecto = models.ForeignKey(Proyecto, null=True, on_delete=models.CASCADE, related_name="proyecto_estudio_multipol")
+  tipoTecnica = models.ForeignKey(Tecnica, null=True, related_name='tecnica_estudio_multipol')
   fecha_inicio = models.DateField(default=now)
   fecha_final = models.DateField(default=now)
   estado = models.BooleanField(default=True)
-  administrador = models.ForeignKey(User, null=True, related_name='administrador_estudio_multipol')
-  coordinador = models.ForeignKey(User, null=True, related_name='coordinador_estudio_multipol')
-  expertos = models.ManyToManyField(User, related_name='expertos_estudio_multipol')
+  idAdministrador = models.ForeignKey(User, null=True, related_name='administrador_estudio_multipol')
+  idCoordinador = models.ForeignKey(User, null=True, related_name='coordinador_estudio_multipol')
+  idExpertos = models.ManyToManyField(User, related_name='expertos_estudio_multipol')
   dias_finalizacion_informe = models.PositiveIntegerField(default=5)
 
   class Meta:
     verbose_name = "Multipol"
     verbose_name_plural = "Multipols"
-    unique_together = [('titulo', 'tipo_tecnica', 'proyecto')]
+    unique_together = [('titulo', 'tipoTecnica', 'idProyecto')]
 
   def get_absolute_url(self):
-    return reverse('proyecto:ver_estudios_proyecto', args={self.proyecto.id})
+    return reverse('proyecto:ver_estudios_proyecto', args={self.idProyecto.id})
 
   def __str__(self):
     return u'{0} - {1}'.format(self.id, self.titulo)

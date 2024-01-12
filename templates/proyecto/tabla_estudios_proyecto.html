@@ -2,158 +2,169 @@
 {% load staticfiles %}
 
 {% block extra_css %}
-	<!-- DataTables -->
-	<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
-	<style>
-		#tabla_estudios_proyecto td, th {
-			text-align: center
-		}
-	</style>
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+<style>
+	#tabla_estudios_proyecto td,
+	th {
+		text-align: center
+	}
+</style>
 {% endblock %}
 
 {% block content %}
 
-	{% if user.is_active %}
+{% if user.is_active %}
 
-		{% include 'messages.html' %}
+{% include 'messages.html' %}
 
-		<div class="box">
-			<div class="box-header">
-				<h3 class="box-title">Estudios del proyecto</h3>
+<div class="box">
+	<div class="box-header">
+		<h3 class="box-title">Estudios del proyecto</h3>
 
-				{% if request.user == proyecto.idAdministrador and proyecto.estado %}
-					<select style="float: right" onchange="location = this.value;">
-						<option value="">Agregar estudio al proyecto</option>
-						<option value="{% url 'abaco:nuevo_estudio' proyecto.id %}">Abaco de
-							Regnier
-						</option>
-						<option value="{% url 'entrevista:nuevo_estudio' proyecto.id %}">
-							Entrevista
-						</option>
-						<option value="{% url 'brainstorming:nuevo_estudio' proyecto.id %}">
-							Lluvia de Ideas
-						</option>
-						<option value="{% url 'mactor:nuevo_estudio' proyecto.id %}">
-							MACTOR
-						</option>
-						<option value="{% url 'multipol:crear_estudio' proyecto.id %}">
-							Multipol
-						</option>
-					</select>
-				{% endif %}
-			</div>
+		{% if request.user == proyecto.idAdministrador and proyecto.estado %}
+		<select style="float: right" onchange="location = this.value;">
+			<option value="">Agregar estudio al proyecto</option>
+			<option value="{% url 'abaco:nuevo_estudio' proyecto.id %}">Abaco de
+				Regnier
+			</option>
+			<option value="{% url 'entrevista:nuevo_estudio' proyecto.id %}">
+				Entrevista
+			</option>
+			<option value="{% url 'brainstorming:nuevo_estudio' proyecto.id %}">
+				Lluvia de Ideas
+			</option>
+			<option value="{% url 'mactor:nuevo_estudio' proyecto.id %}">
+				MACTOR
+			</option>
+			<option value="{% url 'multipol:crear_estudio' proyecto.id %}">
+				Multipol
+			</option>
+		</select>
+		{% endif %}
+	</div>
 
-			<!-- /.box-header -->
-			<div class="box-body">
-				{% if estudios %}
-					<table id="tabla_estudios_proyecto"
-					       class="table table-bordered table-striped">
-						<thead>
-						<tr>
-							<th style="width: 20px">Tipo</th>
-							<th>Nombre</th>
-							<th style="width: 50px">Inicio</th>
-							<th style="width: 10px">Cierre</th>
-							<th style="width: 50px">Estado</th>
-							<th style="width: 100px">Rol(es)</th>
-							<th style="width: 190px">Acciones</th>
-						</tr>
-						</thead>
-						<tbody>
-						{% for estudio in estudios %}
-							<tr>
-								<td>{{ estudio.prosp.tipoTecnica.nombre }}</td>
-								<td>{{ estudio.prosp.titulo }}</td>
-								<td>{{ estudio.prosp.fecha_inicio }}</td>
-								<td>{{ estudio.prosp.fecha_final }}</td>
-								<td>
-									{% if estudio.prosp.estado %}
-										<a class="btn btn-sm btn-success" title="Abierto"><i
-											class="fa fa-check"></i></a>
-									{% else %}
-										<a class="btn btn-sm btn-danger" title="Cerrado"><i
-											class="fa fa-times"></i></a>
-									{% endif %}
-								</td>
-								<td>{{ estudio.rol }}</td>
-								<td>{% include 'proyecto/opciones_ver_editar_eliminar_listarMensajes.html' %}</td>
-							</tr>
-						{% endfor %}
-						</tbody>
-					</table>
-				{% else %}
-					<h3>Este proyecto actualmente no cuenta con estudios registrados.</h3>
-				{% endif %}
+	<!-- /.box-header -->
+	<div class="box-body">
+		{% if estudios %}
+		<table id="tabla_estudios_proyecto" class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th style="width: 20px">Tipo</th>
+					<th>Nombre</th>
+					<th style="width: 50px">Inicio</th>
+					<th style="width: 10px">Cierre</th>
+					<th style="width: 50px">Estado</th>
+					<th style="width: 100px">Rol(es)</th>
+					<th style="width: 190px">Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for estudio in estudios %}
+				<tr>
+					<td>{{ estudio.prosp.tipoTecnica.nombre }}</td>
+					<td>{{ estudio.prosp.titulo }}</td>
+					<td>{{ estudio.prosp.fecha_inicio }}</td>
+					<td>{{ estudio.prosp.fecha_final }}</td>
+					<td>
+						{% if estudio.prosp.estado %}
+						<a class="btn btn-sm btn-success" title="Abierto"><i class="fa fa-check"></i></a>
+						{% else %}
+						<a class="btn btn-sm btn-danger" title="Cerrado"><i class="fa fa-times"></i></a>
+						{% endif %}
+					</td>
+					<td>{{ estudio.rol }}</td>
+					<td>{% include 'proyecto/opciones_ver_editar_eliminar_listarMensajes.html' %}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<h3>Este proyecto actualmente no cuenta con estudios registrados.</h3>
+		{% endif %}
 
-				<div class="row">
-					<div class="form-group">
-						<div class="col-md-8 col-md-offset-3">
-							<a class="btn btn-success"
-							   href="{% url 'proyecto:proyectos_prospectivos' %}"
-							   title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
-							<a class="btn btn-primary" data-toggle="modal" href="#myModal"
-							   title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- /.box-body -->
-		</div>
-
-	{% else %}
-		<h3>Por favor active su cuenta.</h3>
-	{% endif %}
-
-	<!--INICIO MODAL AYUDA------------------------- -->
-
-	<div id="myModal" class="modal fade" tabindex="-1" role="dialog"
-	     aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-					        aria-hidden="true">X
-					</button>
-					<h4 class="modal-title">Ayuda - Lista de estudios del proyecto</h4>
-				</div>
-				<div class="modal-body" style="text-align: justify">
-					<p>En la presente tabla se muestran los estudios en los cuales usted
-						ejerce alguna
-						participación, estos estudios corresponden a la aplicación de
-						determinada técnica
-						prospectiva dentro del proyecto actual.
-					</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal"
-					        aria-hidden="true">Cerrar
-					</button>
+		<div class="row">
+			<div class="form-group">
+				<div class="col-md-8 col-md-offset-3">
+					<a class="btn btn-success" href="{% url 'proyecto:proyectos_prospectivos' %}" title="Atrás"><i
+							class="fa fa-arrow-left"></i> Atrás</a>
+					<a class="btn btn-primary" data-toggle="modal" href="#myModal" title="Ayuda"><i class="fa fa-book"></i>
+						Ayuda</a>
 				</div>
 			</div>
 		</div>
 	</div>
+	<!-- /.box-body -->
+</div>
+
+{% else %}
+<h3>Por favor active su cuenta.</h3>
+{% endif %}
+
+<!--INICIO MODAL AYUDA------------------------- -->
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X
+				</button>
+				<h4 class="modal-title">Ayuda - Lista de estudios del proyecto</h4>
+			</div>
+			<div class="modal-body" style="text-align: justify">
+				<p>En la presente tabla se muestran los estudios en los cuales usted
+					ejerce alguna
+					participación, estos estudios corresponden a la aplicación de
+					determinada técnica
+					prospectiva dentro del proyecto actual.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 {% endblock %}
 
 {% block extra_js %}
 
-	<!-- DataTables -->
-	<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-	<script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
-	<script>
-		$(function () {
-			$('#tabla_estudios_proyecto').DataTable({
-				'paging': true,
-				'lengthChange': true,
-				'searching': true,
-				'ordering': true,
-				'order': [[1, "asc"]],
-				'info': true,
-				'autoWidth': true,
-				'aLengthMenu': [[5, 10, 50, -1], [5, 10, 50, "All"]]
-			})
+<!-- DataTables -->
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+<script>
+	$(function () {
+		$('#tabla_estudios_proyecto').DataTable({
+			'paging': true,
+			'lengthChange': true,
+			'searching': true,
+			'ordering': true,
+			'order': [[1, "asc"]],
+			'info': true,
+			'autoWidth': true,
+			'aLengthMenu': [[5, 10, 50, -1], [5, 10, 50, "All"]]
 		})
-	</script>
+	})
+
+	const eliminarEstudioProyectos = document.querySelectorAll('button.eliminar-multipol');
+	eliminarEstudioProyectos.forEach(item => {
+		item.addEventListener("click", (evt) => {
+			let element = evt.target;
+
+			if (element.localName !== "button") {
+				element = element.parentElement;
+			}
+
+			const { id } = element.dataset;
+
+			fetch(`{% url 'multipol:eliminar_estudio' %}`, { method: "post", body: JSON.stringify({ id }) })
+				.then(() => console.log("Ejecutado"))
+				.catch((err) => console.log(err))
+		})
+	})
+</script>
 
 {% endblock %}
