@@ -3,24 +3,24 @@
 <html lang="es">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <meta name="" content="">
-  <meta charset="UTF-8">
-  <!-- Metadatos-->
-  {% block metadatos %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="" content="">
+    <meta charset="UTF-8">
+    <!-- Metadatos-->
+    {% block metadatos %}
     <meta name="description" content="">
     <meta name="keywords" content="">
     <meta name="author" content="">
     <meta name="copyright" content="">
-  {% endblock metadatos %}
+    {% endblock metadatos %}
 
-  <title>{% block titlehead %}  {% endblock %}</title>
-   <!-- Style (css)-->
-  {% include "css.html" %}
+    <title>{% block titlehead %} {% endblock %}</title>
+    <!-- Style (css)-->
+    {% include "css.html" %}
 
-  {% block extra_css %}{% endblock%}
+    {% block extra_css %}{% endblock%}
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -45,15 +45,16 @@
                 <h1> {% block title %}Bienvenido(a){% endblock %}
                     <small>
                         {% block title_foot %}
-                            <p>
-                                {% if request.user.first_name == '' %}
-                                    {{ request.user }}
-                                {% else %}
-                                    {{ request.user.first_name }} {{ request.user.last_name }}
-                                {% endif %}
-                            </p>
+                        <p>
+                            {% if request.user.first_name == '' %}
+                            {{ request.user }}
+                            {% else %}
+                            {{ request.user.first_name }} {{ request.user.last_name }}
+                            {% endif %}
+                        </p>
                         {% endblock %}
-                    </small></h1>
+                    </small>
+                </h1>
             </section>
 
             <!-- Main content -->
@@ -76,4 +77,6 @@
 
     {% block extra_js %}{% endblock %}
 </body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </html>
