@@ -84,13 +84,21 @@ class UpdateEstudio(UpdateView):
           messages.error(self.request, 'El estudio no pudo ser actualizado. Verifique los datos ingresados.')
       return form_invalid
 
+
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 
 @csrf_exempt
 def delete_estudio(request, *args, **kwargs):
-    print("===>", request.POST)
-    if request.is_ajax():
-        print("AJAX")
-    return redirect("multipol:detalle_estudio", 1)
+    try:
+        if request.is_ajax() and request.method == "POST":
+            id = request.POST.get("id", None)
+            estudio = EstudioMultipol.objects.get(pk=id)
+            estudio.delete()
+            return JsonResponse({'status': 'Estudio eliminado con exito!'}, status=200)
+    except Exception:
+       return JsonResponse({'status': 'Invalid request'}, status=400)
+    return JsonResponse({'status': 'Invalid request'}, status=400)
 
 ### Gestion de acciones del estudio ############################################################

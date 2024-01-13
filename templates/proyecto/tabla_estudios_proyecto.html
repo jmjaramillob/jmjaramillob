@@ -152,17 +152,50 @@
 	const eliminarEstudioProyectos = document.querySelectorAll('button.eliminar-multipol');
 	eliminarEstudioProyectos.forEach(item => {
 		item.addEventListener("click", (evt) => {
-			let element = evt.target;
+			Swal.fire({
+				title: "Estás seguro?",
+				text: "No podrás revertir estos cambios!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Sí, elimínalo!"
+			}).then((result) => {
+				if (result.isConfirmed) {
+					let element = evt.target;
 
-			if (element.localName !== "button") {
-				element = element.parentElement;
-			}
+					if (element.localName !== "button") {
+						element = element.parentElement;
+					}
 
-			const { id } = element.dataset;
+					const { id } = element.dataset;
+					const data = {
+						id,
+						proyecto: "{{proyecto.id}}"
+					}
 
-			fetch(`{% url 'multipol:eliminar_estudio' %}`, { method: "post", body: JSON.stringify({ id }) })
-				.then(() => console.log("Ejecutado"))
-				.catch((err) => console.log(err))
+					$.ajax({
+						url: "{% url 'multipol:eliminar_estudio' %}",
+						type: "POST",
+						dataType: "json",
+						data,
+						success: (data) => {
+							Swal.fire({
+								title: "Éxito!",
+								text: "El estudio ha sido eliminado.",
+								icon: "success"
+							}).then(() => window.location.reload());
+						},
+						error: (error) => {
+							Swal.fire({
+								title: "Ooops!",
+								text: "Ha currido un error al eliminar el estudio.",
+								icon: "error"
+							});
+						}
+					});
+				}
+			});
 		})
 	})
 </script>
