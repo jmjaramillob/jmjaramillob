@@ -3,83 +3,77 @@
 {% block breadcrumbs %}Home/Criterios{% endblock %}
 {% block content %}
 
-	<div class="alert-msg">
+<div class="alert-msg">
 
+</div>
+<div class="box box-success">
+	<div class="box-header with-border">
+		<h3 class="box-title">Criterios</h3>
 	</div>
-	<div class="box box-success">
-		<div class="box-header with-border">
-			<h3 class="box-title">Criterios</h3>
-		</div>
-		<!-- /.box-header -->
-		<div class="box-body">
-			{% if criterios %}
-				<table class="table table-bordered ">
-					<thead>
-					<tr>
-						<th>#</th>
-						<th>Nombre Corto</th>
-						<th>Nombre largo</th>
-						<th>Descripción</th>
-						<th>Funciones</th>
-					</tr>
-					</thead>
-					<tbody class="content-criterios">
-					{% for criterio in criterios %}
+	<!-- /.box-header -->
+	<div class="box-body">
+		{% if criterios %}
+		<table class="table table-bordered ">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Nombre Corto</th>
+					<th>Nombre largo</th>
+					<th>Descripción</th>
+					<th>Funciones</th>
+				</tr>
+			</thead>
+			<tbody class="content-criterios">
+				{% for criterio in criterios %}
 
-						<tr>
-							<td>{{ forloop.counter }}</td>
-							<td>{{ criterio.shortNameC }}</td>
-							<td>{{ criterio.longNameC }}</td>
-							<td>{{ criterio.descriptionC }}</td>
-							<td>
-								<a class="btn btn-warning" name="{{ criterio.id }}"
-								   title="Editar"
-								   href="{% url 'multipol:editar_criterio' criterio.id %}">
-									<i class="fa fa-pencil"></i>
-								</a>
-								<button class="btn btn-danger" title="Eliminar"
-								        id="button_delete_criterio"
-								        name="boton_eliminar"
-								        data-idcriterio="{{ criterio.id }}"
-								        data-toggle="modal"
-								        data-target="#modal-delete-criterio">
-									<i class="fa fa-trash"
-									   data-idcriterio="{{ criterio.id }}"></i>
-								</button>
-							</td>
-						</tr>
-
-					{% endfor %}
-					</tbody>
-				</table>
-			{% else %}
-				<h3>No existen criterios en la base de datos, por favor ingrese un nuevo
-					criterio</h3>
-			{% endif %}
-		</div>
-		<div class="box-footer">
-			<!-- Buttons -->
-			<div class="form-group">
-				<div class="col-lg-offset-3 col-lg-9">
-					<a href="{% url 'multipol:add_criterio' estudio.id %}">
-						<button type="button" class="btn btn-success">Agregar criterio
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td>{{ criterio.short_name }}</td>
+					<td>{{ criterio.long_name }}</td>
+					<td>{{ criterio.description }}</td>
+					<td>
+						<a class="btn btn-warning" name="{{ criterio.id }}" title="Editar"
+							href="{% url 'multipol:editar_criterio' criterio.id %}">
+							<i class="fa fa-pencil"></i>
+						</a>
+						<button class="btn btn-danger" title="Eliminar" id="button_delete_criterio" name="boton_eliminar"
+							data-idcriterio="{{ criterio.id }}" data-toggle="modal" data-target="#modal-delete-criterio">
+							<i class="fa fa-trash" data-idcriterio="{{ criterio.id }}"></i>
 						</button>
-					</a>
-					<button type="button" class="btn btn-default">Importar</button>
-					<button type="button" class="btn btn-default">Exportar</button>
-					<a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default"><i
+					</td>
+				</tr>
+
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<h3>No existen criterios en la base de datos, por favor ingrese un nuevo
+			criterio</h3>
+		{% endif %}
+	</div>
+	<div class="box-footer">
+		<!-- Buttons -->
+		<div class="form-group">
+			<div class="col-lg-offset-3 col-lg-9">
+				<a href="{% url 'multipol:add_criterio' estudio.id %}">
+					<button type="button" class="btn btn-success">Agregar criterio
+					</button>
+				</a>
+				<button type="button" class="btn btn-default">Importar</button>
+				<button type="button" class="btn btn-default">Exportar</button>
+				<a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default"><i
 						class="fa fa-arrow-circle-left"> </i>Regresar</a>
-				</div>
 			</div>
-			<div class="clearfix"></div>
 		</div>
+		<div class="clearfix"></div>
 	</div>
-	</div>
-	<!-- MODAL ELIMINAR CRITERIO -->
-	<div class="modal fade" id="modal-delete-criterio">
-		{% include 'multipol/includes/criterio_confirm_delete.html' %}
-	</div>
-	<!-- /.modal -->
+</div>
+</div>
+<!-- MODAL ELIMINAR CRITERIO -->
+<div class="modal fade" id="modal-delete-criterio">
+	{% include 'multipol/includes/criterio_confirm_delete.html' %}
+</div>
+<!-- /.modal -->
 
 
 
@@ -87,41 +81,41 @@
 
 {% block extra_js %}
 
-	<script>
-		//Script para borrar una criterio
-		var botones_delete = document.querySelectorAll("#button_delete_criterio");
-		var id_criterio_delete = [];
-		botones_delete.forEach(function (value) {
-			value.addEventListener('click', function (evt) {
-				id_criterio_delete.push({id_criterio: evt.target.dataset.idcriterio});
-				//console.log(id_accion_delete);
-			});
-
+<script>
+	//Script para borrar una criterio
+	var botones_delete = document.querySelectorAll("#button_delete_criterio");
+	var id_criterio_delete = [];
+	botones_delete.forEach(function (value) {
+		value.addEventListener('click', function (evt) {
+			id_criterio_delete.push({ id_criterio: evt.target.dataset.idcriterio });
+			//console.log(id_accion_delete);
 		});
 
-		$('#confirm_delete_form').submit(function (evt) {
-			evt.preventDefault();
+	});
 
-			$.ajax({
-				data: {
-					csrfmiddlewaretoken: '{{ csrf_token }}',
-					content: JSON.stringify(id_criterio_delete)
-				},
-				type: "POST",
-				url: "{% url 'multipol:borrar_criterio' estudio.id %}",
-				success: function (data) {
-					$("#modal-delete-criterio").modal("hide");
-					$(".alert-msg").html('' +
-						'<div class="alert alert-success alert-dismissible">\n' +
-						' <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;' +
-						' </button>\n' +
-						' <h4><i class="icon fa fa-check"></i> Alerta!</h4>\n' +
-						' Se eliminó el criterio seleccionado.\n' +
-						'</div>');
+	$('#confirm_delete_form').submit(function (evt) {
+		evt.preventDefault();
 
-					$(".content-criterios").html(data.html_data);
-				}
-			});
+		$.ajax({
+			data: {
+				csrfmiddlewaretoken: '{{ csrf_token }}',
+				content: JSON.stringify(id_criterio_delete)
+			},
+			type: "POST",
+			url: "{% url 'multipol:borrar_criterio' estudio.id %}",
+			success: function (data) {
+				$("#modal-delete-criterio").modal("hide");
+				$(".alert-msg").html('' +
+					'<div class="alert alert-success alert-dismissible">\n' +
+					' <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;' +
+					' </button>\n' +
+					' <h4><i class="icon fa fa-check"></i> Alerta!</h4>\n' +
+					' Se eliminó el criterio seleccionado.\n' +
+					'</div>');
+
+				$(".content-criterios").html(data.html_data);
+			}
 		});
-	</script>
+	});
+</script>
 {% endblock %}

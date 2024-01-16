@@ -1,21 +1,18 @@
 {% for criterio in criterios %}
-	<tr>
-		<td>{{ forloop.counter }}</td>
-		<td>{{ criterio.shortNameC }}</td>
-		<td>{{ criterio.longNameC }}</td>
-		<td>{{ criterio.descriptionC }}</td>
-		<td>
-			<a class="btn btn-warning" name="{{ criterio.id }}" title="Editar"
-			   href="{% url 'multipol:editar_criterio' criterio.id %}">
-				<i class="fa fa-pencil"></i>
-			</a>
-			<button class="btn btn-danger" title="Eliminar"
-			        id="button_delete_criterio"
-			        name="boton_eliminar" data-idcriterio="{{ criterio.id }}"
-			        data-toggle="modal"
-			        data-target="#modal-delete-criterio">
-				<i class="fa fa-trash" data-idcriterio="{{ criterio.id }}"></i>
-			</button>
-		</td>
-	</tr>
+<tr>
+	<td>{{ forloop.counter }}</td>
+	<td>{{ criterio.short_name }}</td>
+	<td>{{ criterio.long_name }}</td>
+	<td>{{ criterio.description }}</td>
+	<td>
+		<a class="btn btn-warning" name="{{ criterio.id }}" title="Editar"
+			href="{% url 'multipol:editar_criterio' criterio.id %}">
+			<i class="fa fa-pencil"></i>
+		</a>
+		<button class="btn btn-danger" title="Eliminar" id="button_delete_criterio" name="boton_eliminar"
+			data-idcriterio="{{ criterio.id }}" data-toggle="modal" data-target="#modal-delete-criterio">
+			<i class="fa fa-trash" data-idcriterio="{{ criterio.id }}"></i>
+		</button>
+	</td>
+</tr>
 {% endfor %}
