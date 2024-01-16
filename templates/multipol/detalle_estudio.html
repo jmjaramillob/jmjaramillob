@@ -1,6 +1,6 @@
-{% extends 'base.html' %} 
-{% load staticfiles %} 
-{% block title %} Multipol{%endblock %} 
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %} Multipol{%endblock %}
 {% block content %}
 
 <section class="content">
@@ -19,7 +19,8 @@
         <div class="icon">
           <i class="fa fa-gears"></i>
         </div>
-        <a href="{% url 'multipol:lista_accion' estudio.id %}"class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+        <a href="{% url 'multipol:lista_accion' estudio.id %}" class="small-box-footer">Más información <i
+            class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -34,7 +35,8 @@
         <div class="icon">
           <i class="fa fa-list-alt"></i>
         </div>
-        <a href="{% url 'multipol:lista_criterio' estudio.id %}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+        <a href="{% url 'multipol:lista_criterio' estudio.id %}" class="small-box-footer">Más información <i
+            class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -49,7 +51,8 @@
         <div class="icon">
           <i class="fa fa-clipboard"></i>
         </div>
-        <a href="{% url 'multipol:lista_politica' estudio.id %}" class="small-box-footer" >Más información <i class="fa fa-arrow-circle-right"></i>
+        <a href="{% url 'multipol:lista_politica' estudio.id %}" class="small-box-footer">Más información <i
+            class="fa fa-arrow-circle-right"></i>
         </a>
       </div>
     </div>
@@ -71,7 +74,8 @@
         <div class="icon">
           <i class="fa fa-table"></i>
         </div>
-        <a href="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}" class="small-box-footer" >Más información <i class="fa fa-arrow-circle-right"></i></a>
+        <a href="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}" class="small-box-footer">Más información <i
+            class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -86,7 +90,8 @@
         <div class="icon">
           <i class="fa fa-table"></i>
         </div>
-        <a href="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+        <a href="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}" class="small-box-footer">Más información
+          <i class="fa fa-arrow-circle-right"></i></a>
       </div>
     </div>
     <!-- ./col -->
@@ -101,17 +106,18 @@
         <div class="icon">
           <i class="fa fa-table"></i>
         </div>
-        <a href="{% url 'multipol:evaluacion_accion_politica' estudio.id %}" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
+        <a href="#" class="small-box-footer">Más información <i class="fa fa-arrow-circle-right"></i></a>
       </div>
       <div class="clearfix">
-        <a href="{% url 'proyecto:ver_estudios_proyecto' proyecto.id %}" class="btn btn-default"><i class="fa fa-arrow-circle-left"> </i>Regresar</a>
+        <a href="{% url 'proyecto:ver_estudios_proyecto' proyecto.id %}" class="btn btn-default"><i
+            class="fa fa-arrow-circle-left"> </i>Regresar</a>
       </div>
     </div>
     <!-- ./col -->
   </div>
   <!-- /.row -->
   {% else %}
-  	<h1>Usted no se encuentra registrado</h1>
+  <h1>Usted no se encuentra registrado</h1>
   {% endif %}
 </section>
 
