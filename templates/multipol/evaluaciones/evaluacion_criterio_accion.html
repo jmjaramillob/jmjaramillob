@@ -1,5 +1,7 @@
-{% extends 'base.html' %} {% load staticfiles %} {% block title %}Evaluación
-Criterio Acción {% endblock %} {% block extra_css %}
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Evaluación Criterio Acción {% endblock %}
+{% block extra_css %}
 <style>
   .example-modal .modal {
     position: relative;
@@ -9,6 +11,10 @@ Criterio Acción {% endblock %} {% block extra_css %}
     left: auto;
     display: block;
     z-index: 1;
+  }
+
+  button>* {
+    pointer-events: none;
   }
 
   .example-modal .modal {
@@ -26,13 +32,50 @@ Criterio Acción {% endblock %} {% block extra_css %}
         Tabla de evaluación de acciones respecto a criterios
       </h3>
     </div>
-
+    <div class="widget-content"></div>
     {% if user == estudio.idCoordinador %}
-    <div class="widget-content">
-      <div class="box-body">
-        <form method="post" id="evaluation_form" action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
+
+    <div class="box-body">
+      <form method="post" id="evaluation_form" action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
 
 
+        <table class="table table-bordered">
+          {% csrf_token %}
+          <thead>
+            <tr>
+              <td></td>
+              {% for criterio in criterios %}
+              <td>{{ criterio.short_name }}</td>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for accion in acciones %}
+            <tr>
+              <td>{{ accion.short_name }}</td>
+              {% for criterio in criterios %}
+              <td>
+                <div class="input-group">
+                  <input type="text" name="q" class="form-control calificacion" data-criterio="{{ criterio.id }}"
+                    data-accion="{{ accion.id }}" placeholder="Valor" value="0" min="0" />
+                  <span class="input-group-btn">
+                    <button type="button" name="view" id="view-btn" class="btn btn-default">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </span>
+                </div>
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </form>
+      {% else %}
+
+      {% if user in estudio.idExpertos.all %}
+      <div class="widget-content">
+        <div class="box-body">
           <table class="table table-bordered">
             {% csrf_token %}
             <thead>
@@ -48,180 +91,108 @@ Criterio Acción {% endblock %} {% block extra_css %}
               <tr>
                 <td>{{ accion.short_name }}</td>
                 {% for criterio in criterios %}
-                <td>
+                <td class="eval">
                   <div class="input-group">
-                    <input type="text" name="q" class="form-control calificacion" data-criterio="{{ criterio.id }}"
-                      data-accion="{{ accion.id }}" placeholder="Valor" value="0" min="0" />
                     <span class="input-group-btn">
-                      <button type="button" name="view" id="view-btn" class="btn btn-default">
-                        <i class="fa fa-eye"></i>
+                      <button type="button" name="boton-eval" data-accion="{{ accion.id }}"
+                        data-accion-name="{{ accion.short_name }}" data-criterio-name="{{ criterio.short_name }}"
+                        data-criterio="{{ criterio.id }}" id="{{ accion.id }}-{{ criterio.id }}"
+                        class="btn btn-success show-criteria-action" data-toggle="modal" data-target="#modal-default">
+                        <i class="fa fa-check"></i>
+
                       </button>
+
+
                     </span>
+
                   </div>
+
                 </td>
+
                 {% endfor %}
               </tr>
               {% endfor %}
+
             </tbody>
           </table>
-        </form>
-        {% else %}
 
-        {% if user in estudio.idExpertos.all %}
-        <div class="widget-content">
-          <div class="box-body">
-            <table class="table table-bordered">
-              {% csrf_token %}
-              <thead>
-                <tr>
-                  <td></td>
-                  {% for criterio in criterios %}
-                  <td>{{ criterio.short_name }}</td>
-                  {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for accion in acciones %}
-                <tr>
-                  <td>{{ accion.short_name }}</td>
-                  {% for criterio in criterios %}
-                  <td class="eval">
-                    <div class="input-group">
-                      <span class="input-group-btn">
-                        <button type="button" name="boton-eval" id="{{ accion.id }}-{{ criterio.id }}"
-                          class="btn btn-success" data-toggle="modal" data-target="#modal-default">
-
-                          <i class="fa fa-check"></i>
-
-                        </button>
-
-                      </span>
-
-                    </div>
-                  </td>
-
-                  {% endfor %}
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-
+        </div>
+        {% include "multipol/evaluaciones/modal_evaluacion_CA.html" %}
+        <div class="box-footer">
+          <!-- Buttons -->
+          <div class="col-lg-offset-3 col-lg-9">
+            <button type="submit" id="guardar_eval" class="btn btn-success">
+              <i class="fa fa-save"> </i> Agregar evaluación
+            </button>
+            <button type="button" class="btn btn-danger">Importar</button>
+            <button type="button" class="btn btn-default">Exportar</button>
+            <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
+              <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
           </div>
 
-          <div class="box-footer">
-            <!-- Buttons -->
-            <div class="col-lg-offset-3 col-lg-9">
-              <button type="submit" id="guardar_eval" class="btn btn-success">
-                <i class="fa fa-save"> </i> Agregar evaluación
-              </button>
-              <button type="button" class="btn btn-danger">Importar</button>
-              <button type="button" class="btn btn-default">Exportar</button>
-              <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
-                <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
-            </div>
-
-            <div class="clearfix"></div>
-          </div>
+          <div class="clearfix"></div>
         </div>
       </div>
-      {% else %}
-      <div class="box-body">
-        {{ estudio.idExpertos.id }}
-        <p> Usted no se encuentra registrado en este estudio </p>
-        <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
-          <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
-      </div>
-      {% endif %}
-
-      {% endif %}
     </div>
+    {% else %}
+    <div class="box-body">
+      {{ estudio.idExpertos.id }}
+      <p> Usted no se encuentra registrado en este estudio </p>
+      <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
+        <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
+    </div>
+    {% endif %}
 
+    {% endif %}
   </div>
 
+</div>
 
 
-  {% endblock %} {% block extra_js %}
-  <script>
-    var dataObjects = document.querySelectorAll(".calificacion");
-    var llenar_evaluacionesCA = [];
 
-    $.ajax({
-      type: "GET",
-      url: "{% url 'multipol:llenar_evaluacionca' estudio.id %}",
-      success: function (response) {
-        llenar_evaluacionesCA = response.evaluacionesCA;
-        console.log("llegada sin el if " + llenar_evaluacionesCA[0].valoracionCA);
-        if (!llenar_evaluacionesCA.length == 0) {
-          llenar(response);
-          console.log("Esta lleno");
-        } else {
-          console.log("Esta empty");
-        }
-      },
-      error: function (error) {
-        console.log("evaluacionesca algo salió mal" + error);
-      },
-    });
+{% endblock %} {% block extra_js %}
+<script>
+  // var dataObjects = document.querySelectorAll(".calificacion");
+  // var llenar_evaluacionesCA = [];
 
-    const llenar = () => {
-      llenar_evaluacionesCA.forEach(function (elemento) {
-        //let criterio = elemento.getAttribute('data-criterio')
-        //let accion = elemento.getAttribute('data-accion')
-        myInput = document.querySelector(
-          '[data-criterio="' +
-          elemento.criterio_id +
-          '"][data-accion="' +
-          elemento.accion_id +
-          '"]'
-        );
-        if (elemento.valoracionCA != null) {
-        }
+  // $.ajax({
+  //   type: "GET",
+  //   url: "{% url 'multipol:llenar_evaluacionca' estudio.id %}",
+  //   success: function (response) {
+  //     llenar_evaluacionesCA = response.evaluacionesCA;
+  //     console.log("llegada sin el if " + llenar_evaluacionesCA[0].puntuacion);
+  //     if (!llenar_evaluacionesCA.length == 0) {
+  //       llenar(response);
+  //       console.log("Esta lleno");
+  //     } else {
+  //       console.log("Esta empty");
+  //     }
+  //   },
+  //   error: function (error) {
+  //     console.log("evaluacionesca algo salió mal" + error);
+  //   },
+  // });
+</script>
 
-        console.log(myInput);
-      });
-    };
-  </script>
+<script>
+  let accion;
+  let criterio;
+  let botones_eval = document.querySelectorAll('button[name="boton-eval"]');
+  botones_eval.forEach(eval => {
+    eval.addEventListener("click", function (evt) {
+      const form = document.querySelector(".modal-criteria-action");
+      const accionInp = document.querySelector("input[name='acciones']");
+      const criterioInp = document.querySelector("input[name='criterios']");
+      const accionTxt = document.querySelector("#accion-name");
+      const criterioTxt = document.querySelector("#criterio-name");
 
-  <script>
-    let accion;
-    let criterio;
-    let botones_eval = document.querySelectorAll('[name="boton-eval"]');
-    botones_eval.item(0).addEventListener("onClick", function (evt) {
-      accion = botones_eval.item(0).attr('id');
-      console.log(accion)
-    });
-  </script>
-
-  <script>
-    var dataInput = document.querySelectorAll(".calificacion");
-    var evaluacionesCA = [];
-
-    dataInput.forEach(function (value) {
-      value.addEventListener("blur", function (evt) {
-        var evaluacionCA = {
-          criterio: evt.target.dataset.criterio,
-          accion: evt.target.dataset.accion,
-          valoracionCA: evt.target.value,
-        };
-        evaluacionesCA.push(evaluacionCA);
-      });
-    });
-
-    $("#evaluation_form").submit(function (evt) {
-      evt.preventDefault();
-
-      $.ajax({
-        // create an AJAX call...
-        data: {
-          csrfmiddlewaretoken: "{{ csrf_token }}",
-          content: JSON.stringify(evaluacionesCA),
-        }, // get the form data
-        type: "POST", // GET or POST
-        url: "{% url 'multipol:evaluacion_criterio_accion' estudio.id %}", // the file to call
-        success: function (response) {
-          // on success..
-        },
-      });
-    });
-  </script>
-  {% endblock %}
+      const { accion, criterio, accionName, criterioName } = evt.target.dataset;
+      console.log(evt.target.dataset)
+      accionInp.value = accion;
+      criterioInp.value = criterio;
+      accionTxt.innerHTML = accionName;
+      criterioTxt.innerHTML = criterioName;
+    })
+  });
+</script>
+{% endblock %}
