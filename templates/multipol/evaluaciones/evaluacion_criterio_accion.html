@@ -175,19 +175,17 @@
 </script>
 
 <script>
-  let accion;
-  let criterio;
   let botones_eval = document.querySelectorAll('button[name="boton-eval"]');
   botones_eval.forEach(eval => {
     eval.addEventListener("click", function (evt) {
       const form = document.querySelector(".modal-criteria-action");
-      const accionInp = document.querySelector("input[name='acciones']");
-      const criterioInp = document.querySelector("input[name='criterios']");
+      const accionInp = document.querySelector("input[name='accion']");
+      const criterioInp = document.querySelector("input[name='criterio']");
       const accionTxt = document.querySelector("#accion-name");
       const criterioTxt = document.querySelector("#criterio-name");
 
+
       const { accion, criterio, accionName, criterioName } = evt.target.dataset;
-      console.log(evt.target.dataset)
       accionInp.value = accion;
       criterioInp.value = criterio;
       accionTxt.innerHTML = accionName;
