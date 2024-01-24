@@ -12,6 +12,7 @@ from apps.multipolv1.forms import AccionForm, CriterioForm, PoliticaForm, Estudi
 from apps.multipolv1.models import EstudioMultipol, EvaluacionCriterioAccion, EvaluacionCriterioPolitica
 from apps.proyecto.models import Proyecto, Tecnica
 from apps.proyecto.views import contexto_mensajes, obtener_tipo_usuario_estudio
+from django.contrib.auth.models import User
 
 
 ####### GESTIÓN DE ESTUDIOS MULTIPOL ########################################################
@@ -324,25 +325,25 @@ class DeletePolitica(DeleteView):
 
 def evaluacion_criterio_accion(request, pk):
   estudio = get_object_or_404(EstudioMultipol, id=pk)
-  #evalt = EvaluacionTotalCA.objects.filter(estudio=estudio.id)
-  #if evalt.exist():
-  #  evalt = EvaluacionTotalCA(estudio=estudio)
   acciones = Accion.objects.filter(estudio=estudio.id)
   criterios = Criterio.objects.filter(estudio=estudio.id)
-  contexto = {}   
 
   if request.method == 'POST' or request.is_ajax():
-    data = json.loads(request.POST['content'])
-    for i in data:
-      accion = Accion.objects.get(pk=i['accion'])
-      criterio = Criterio.objects.get(pk=i['criterio'])
-      puntuacion = i['puntuacion']
-      evaluacion_criterio_accion = EvaluacionCriterioAccion(estudio=estudio, accion=accion, criterio=criterio, puntuacion=puntuacion)
-    evaluacion_criterio_accion.save()
-    return index(request)
-
-
-    self.actualizar_informe(estudio)
+    try:
+        response = json.loads(request.POST['content'])
+        criterio = get_object_or_404(Criterio, pk=response.get("criterio", None))
+        accion = get_object_or_404(Accion, pk=response.get("accion", None))
+        data = {
+          **response, 
+          "accion": accion,
+          "criterio": criterio,
+          "experto": request.user, 
+          "estudio": estudio
+        }
+        evaluacion_criterio_created = EvaluacionCriterioAccion.objects.create(**data)
+        return JsonResponse({"message": "Evaluacion creada satisfactoriamente.", "result": evaluacion_criterio_created})
+    except Exception:
+        return JsonResponse(data={"message": "La evaluacion no pudo ser creada."}, status=404)
 
   context = {'acciones': acciones, 'criterios': criterios, 'estudio': estudio}
   return render(request, 'multipol/evaluaciones/evaluacion_criterio_accion.html', context)
@@ -386,5 +387,4 @@ def llenar_matriz_evaluacionCA(request, pk):
     #consenso = verificar_consenso(request, idEstudio)
     evaluacionesCA = EvaluacionCriterioAccion.objects.filter(estudio=pk).values()
     evaluacionesCA = list(evaluacionesCA)
-    print(evaluacionesCA)
     return JsonResponse({'evaluacionesCA': evaluacionesCA})
