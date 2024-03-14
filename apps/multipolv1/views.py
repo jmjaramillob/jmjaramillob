@@ -340,7 +340,9 @@ def evaluacion_criterio_accion(request, pk):
           "experto": request.user, 
           "estudio": estudio
         }
+        print(response)
         evaluacion_criterio_created = EvaluacionCriterioAccion.objects.create(**data)
+        """Hasta aquí guarda y todo pero no encuentra el id del estudio"""
         return JsonResponse({"message": "Evaluacion creada satisfactoriamente.", "result": evaluacion_criterio_created})
     except Exception:
         return JsonResponse(data={"message": "La evaluacion no pudo ser creada."}, status=404)
@@ -387,4 +389,20 @@ def llenar_matriz_evaluacionCA(request, pk):
     #consenso = verificar_consenso(request, idEstudio)
     evaluacionesCA = EvaluacionCriterioAccion.objects.filter(estudio=pk).values()
     evaluacionesCA = list(evaluacionesCA)
+    evaluacionesCP = EvaluacionCriterioPolitica.objects.filter(estudio=pk).values()
+    evaluacionesCP = list(evaluacionesCP)
+    evaluacionCA = {}
+    puntuacion_total = 0
+    
+    #Este for se utiliza para calcular los valores de la relacion entre cada accion y politica
+    for i in range(len(evaluacionesCA)):
+      for j in range(len(evaluacionesCP)): 
+        puntuacion_total = puntuacion_total + evaluacionesCA[i]*(evaluacionesCP[j]*100)
+    
+    for eca in evaluacionesCA:
+       for ecp in evaluacionesCP:
+          evaluacionCA["accion"]: eca.accion
+          evaluacionCA["politica"]: ecp.politica
+          
+          evaluacionCA["puntuacion"]: eca.valoracion*(ecp.valoracion*100)
     return JsonResponse({'evaluacionesCA': evaluacionesCA})

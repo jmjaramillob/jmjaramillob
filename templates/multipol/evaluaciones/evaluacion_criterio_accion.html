@@ -71,80 +71,95 @@
           </tbody>
         </table>
       </form>
-      {% else %}
-
-      {% if user in estudio.idExpertos.all %}
-      <div class="widget-content">
-        <div class="box-body">
-          <table class="table table-bordered">
-            {% csrf_token %}
-            <thead>
-              <tr>
-                <td></td>
-                {% for criterio in criterios %}
-                <td>{{ criterio.short_name }}</td>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for accion in acciones %}
-              <tr>
-                <td>{{ accion.short_name }}</td>
-                {% for criterio in criterios %}
-                <td class="eval">
-                  <div class="input-group">
-                    <span class="input-group-btn">
-                      <button type="button" name="boton-eval" data-accion="{{ accion.id }}"
-                        data-accion-name="{{ accion.short_name }}" data-criterio-name="{{ criterio.short_name }}"
-                        data-criterio="{{ criterio.id }}" id="{{ accion.id }}-{{ criterio.id }}"
-                        class="btn btn-success show-criteria-action" data-toggle="modal" data-target="#modal-default">
-                        <i class="fa fa-check"></i>
-
-                      </button>
-
-
-                    </span>
-
-                  </div>
-
-                </td>
-
-                {% endfor %}
-              </tr>
-              {% endfor %}
-
-            </tbody>
-          </table>
-
+      <div class="box-footer">
+        <!-- Buttons -->
+        <div class="col-lg-offset-3 col-lg-9">
+          <button type="submit" id="guardar_eval" class="btn btn-success">
+            <i class="fa fa-save"> </i> Agregar evaluación
+          </button>
+          <button type="button" class="btn btn-danger">Importar</button>
+          <button type="button" class="btn btn-default">Exportar</button>
+          <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
+            <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
         </div>
-        {% include "multipol/evaluaciones/modal_evaluacion_CA.html" %}
-        <div class="box-footer">
-          <!-- Buttons -->
-          <div class="col-lg-offset-3 col-lg-9">
-            <button type="submit" id="guardar_eval" class="btn btn-success">
-              <i class="fa fa-save"> </i> Agregar evaluación
-            </button>
-            <button type="button" class="btn btn-danger">Importar</button>
-            <button type="button" class="btn btn-default">Exportar</button>
-            <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
-              <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
-          </div>
 
-          <div class="clearfix"></div>
-        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
     {% else %}
-    <div class="box-body">
-      {{ estudio.idExpertos.id }}
-      <p> Usted no se encuentra registrado en este estudio </p>
-      <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
-        <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
-    </div>
-    {% endif %}
 
-    {% endif %}
+    {% if user in estudio.idExpertos.all %}
+    <div class="widget-content">
+      <div class="box-body">
+        <table class="table table-bordered">
+          {% csrf_token %}
+          <thead>
+            <tr>
+              <td></td>
+              {% for criterio in criterios %}
+              <td>{{ criterio.short_name }}</td>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for accion in acciones %}
+            <tr>
+              <td>{{ accion.short_name }}</td>
+              {% for criterio in criterios %}
+              <td class="eval">
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button type="button" name="boton-eval" data-accion="{{ accion.id }}"
+                      data-accion-name="{{ accion.short_name }}" data-criterio-name="{{ criterio.short_name }}"
+                      data-criterio="{{ criterio.id }}" id="{{ accion.id }}-{{ criterio.id }}"
+                      class="btn btn-success show-criteria-action" data-toggle="modal" data-target="#modal-default">
+                      <i class="fa fa-check"></i>
+
+                    </button>
+
+
+                  </span>
+
+                </div>
+
+              </td>
+
+              {% endfor %}
+            </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+      </div>
+      {% include "multipol/evaluaciones/modal_evaluacion_CA.html" %}
+      <div class="box-footer">
+        <!-- Buttons -->
+        <div class="col-lg-offset-3 col-lg-9">
+          <button type="submit" id="guardar_eval" class="btn btn-success">
+            <i class="fa fa-save"> </i> Agregar evaluación
+          </button>
+          <button type="button" class="btn btn-danger">Importar</button>
+          <button type="button" class="btn btn-default">Exportar</button>
+          <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
+            <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
+        </div>
+
+        <div class="clearfix"></div>
+      </div>
+    </div>
   </div>
+  {% else %}
+  <div class="box-body">
+    {{ estudio.idExpertos.id }}
+    <p> Usted no se encuentra registrado en este estudio </p>
+    <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default">
+      <i class="fa fa-arrow-circle-left"> </i>Regresar</a>
+  </div>
+  {% endif %}
+
+  {% endif %}
+</div>
 
 </div>
 
