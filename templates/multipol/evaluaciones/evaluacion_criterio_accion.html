@@ -113,8 +113,18 @@
                       data-accion-name="{{ accion.short_name }}" data-criterio-name="{{ criterio.short_name }}"
                       data-criterio="{{ criterio.id }}" id="{{ accion.id }}-{{ criterio.id }}"
                       class="btn btn-success show-criteria-action" data-toggle="modal" data-target="#modal-default">
+                      {% if evaluacion_ca %}
+                      {% for eca in evaluacion_ca %}
+                      {% if eca.accion.id == accion.id and eca.criterio.id == criterio.id %}
+                      {{ eca.puntuacion }}
+                      {% else %}
                       <i class="fa fa-check"></i>
+                      {% endif %}
+                      {% endfor %}
 
+                      {% else %}
+                      <i class="fa fa-check"></i>
+                      {% endif %}
                     </button>
 
 
