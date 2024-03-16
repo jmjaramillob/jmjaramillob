@@ -327,6 +327,7 @@ def evaluacion_criterio_accion(request, pk):
   estudio = get_object_or_404(EstudioMultipol, id=pk)
   acciones = Accion.objects.filter(estudio=estudio.id)
   criterios = Criterio.objects.filter(estudio=estudio.id)
+  eval_ca = EvaluacionCriterioAccion.objects.filter(estudio=estudio.id)
 
   if request.method == 'POST' or request.is_ajax():
     try:
@@ -340,14 +341,15 @@ def evaluacion_criterio_accion(request, pk):
           "experto": request.user, 
           "estudio": estudio
         }
-        print(response)
-        evaluacion_criterio_created = EvaluacionCriterioAccion.objects.create(**data)
-        """Hasta aquí guarda y todo pero no encuentra el id del estudio"""
-        return JsonResponse({"message": "Evaluacion creada satisfactoriamente.", "result": evaluacion_criterio_created})
-    except Exception:
+        print(data)
+        EvaluacionCriterioAccion.objects.create(**data)
+        return JsonResponse({"message": "Evaluacion creada satisfactoriamente."})
+    except Exception as e:
+        print(e)
         return JsonResponse(data={"message": "La evaluacion no pudo ser creada."}, status=404)
-
-  context = {'acciones': acciones, 'criterios': criterios, 'estudio': estudio}
+  for eca in eval_ca:
+    print(eca.accion)
+  context = {'acciones': acciones, 'criterios': criterios, 'estudio': estudio, 'evaluacion_ca': eval_ca}
   return render(request, 'multipol/evaluaciones/evaluacion_criterio_accion.html', context)
 
 
