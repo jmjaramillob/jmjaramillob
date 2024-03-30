@@ -1,0 +1,79 @@
+<!-- MODAL -->
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Valoración Acción Criterio</h4>
+            </div>
+
+            <div class="modal-body">
+
+                <form class="form modal-criteria-action" id="modal-criteria-action" method="post"
+                    action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
+                    <p>
+                        <label>Accion: <span id="accion-name"></span></label>
+                        <input type="hidden" id="acciones" name="accion" />
+                    </p>
+                    <p>
+                        <label>Criterio: <span id="criterio-name"></span></label>
+                        <input type="hidden" id="criterios" name="criterio" />
+                    </p>
+                    <p>
+                        <label>Valoración: </label>
+                        <input type="number" id="puntuacion" name="puntuacion" value="0" />
+                    </p>
+                    <p>
+                        <label>Opinión: </label>
+                        <input type="textarea" id="opinion" name="opinion" />
+                    </p>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                <button type="submit" form="modal-criteria-action" class="btn btn-primary">Guardar</button>
+            </div>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script>
+    const form = document.getElementById("modal-criteria-action")
+    form.addEventListener("submit", (evt) => {
+        evt.preventDefault();
+
+        const formData = new FormData(evt.target);
+        const data = Object.fromEntries(formData.entries())
+        // save data
+        $.ajax({
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+                content: JSON.stringify(data),
+            },
+            type: "POST",
+            url: "{% url 'multipol:evaluacion_criterio_accion' estudio.id %}",
+
+            success: function (response) {
+                Swal.fire({
+                    title: "Éxito!",
+                    text: response.message,
+                    icon: "success"
+                })
+            },
+            error: function ({ responseJSON }) {
+                Swal.fire({
+                    title: "Ooops!",
+                    text: responseJSON?.message,
+                    icon: "error"
+                });
+            },
+        });
+    })
+    console.log(response)
+</script>
