@@ -357,32 +357,30 @@ def evaluacion_criterio_politica(request, pk):
   estudio = get_object_or_404(EstudioMultipol, id=pk)
   politicas = Politica.objects.filter(estudio=estudio.id)
   criterios = Criterio.objects.filter(estudio=estudio.id)
-  experto = request.user
+  eval_cp = EvaluacionCriterioPolitica.objects.filter(estudio=estudio.id)
   #self.actualizar_informe(estudio)
 
-  context = {'politicas': politicas, 'criterios': criterios, 'estudio': estudio}
-  # evaluacionCP = EvaluacionCP
-  # if EvaluacionCP.objects.exists():
-  #   evaluacionCP = EvaluacionCP.objects.get(0)
-  #   valueCP = evaluacionCP.valoracionCP
-  #   context = {'politicas': politicas, 'criterios': criterios,
-  #              'Valoraciones': valueCP}
   if request.method == 'POST' or request.is_ajax():
-    data = json.loads(request.POST['content'])
-    for i in data:
-      politica = Politica.objects.get(pk=i['politica'])
-      criterio = Criterio.objects.get(pk=i['criterio'])
-      puntuacion = i['puntuacion']
-      evaluacion_criterio_politica = EvaluacionCriterioPolitica(
-        estudio=estudio,
-        politica=politica,
-        criterio=criterio,
-        puntuacion=puntuacion,
-        opinion="aabc",
-        idExperto=experto
-      )
-      evaluacion_criterio_politica.save()
-    return index(request)
+    try:
+        response = json.loads(request.POST['content'])
+        criterio = get_object_or_404(Criterio, pk=response.get("criterio", None))
+        politica = get_object_or_404(Politica, pk=response.get("politica", None))
+        data = {
+          **response, 
+          "politica": politica,
+          "criterio": criterio,
+          "experto": request.user, 
+          "estudio": estudio
+        }
+        print(data)
+        EvaluacionCriterioPolitica.objects.create(**data)
+        return JsonResponse({"message": "Evaluacion creada satisfactoriamente."})
+    except Exception as e:
+        print(e)
+        return JsonResponse(data={"message": "La evaluacion no pudo ser creada."}, status=404)
+  for ecp in eval_cp:
+    print(ecp.politica)
+  context = {'politicas': politicas, 'criterios': criterios, 'estudio': estudio, 'evaluacion_cp': eval_cp}
 
   return render(request, 'multipol/evaluaciones/evaluacion_criterio_politica.html', context)
 

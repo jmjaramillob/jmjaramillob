@@ -13,12 +13,14 @@
                 <form class="form modal-criteria-action" id="modal-criteria-action" method="post"
                     action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
                     <p>
-                        <label>Accion: <span id="accion-name"></span></label>
+
+                        <label for="acciones">Accion: <span id="accion-name"></span></label>
                         <input type="hidden" id="acciones" name="accion" />
+
                     </p>
                     <p>
-                        <label>Criterio: <span id="criterio-name"></span></label>
-                        <input type="hidden" id="criterios" name="criterio" />
+                        <label for="criterios">Criterio: <span id="criterio-name"></span></label>
+                        <input type="hidden" aria-hidden="true" id="criterios" name="criterio" />
                     </p>
                     <p>
                         <label>Valoración: </label>
@@ -64,6 +66,8 @@
                     title: "Éxito!",
                     text: response.message,
                     icon: "success"
+                }).then(() => {
+                    window.location.reload()
                 })
             },
             error: function ({ responseJSON }) {

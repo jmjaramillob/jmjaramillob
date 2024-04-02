@@ -12,16 +12,20 @@
                 </form>
                 {% csrf_token %}
                 <p>
-                    <label>Accion: </label>
-                    <input type="text" name="acciones" value="{{ politica.short_name }}" />
+                    <label>Política: <span id="politica-name"></span></label>
+                    <input type="hidden" id="criterios" name="criterio" />
                 </p>
                 <p>
-                    <label>Criterio: </label>
+                    <label>Criterio: <span id="criterio-name"></span></label>
                     <input type="text" name="criterios" value="{{ criterio.short_name }}" />
                 </p>
                 <p>
                     <label>Valoración: </label>
-                    <input type="text" name="puntuacion" value="0" />
+                    <input type="number" id="puntuacion" name="puntuacion" value="0" />
+                </p>
+                <p>
+                    <label>Opinión: </label>
+                    <input type="textarea" id="opinion" name="opinion" />
                 </p>
                 <p>
                     <button><i class="fa-address-book"></i></button>
@@ -38,3 +42,37 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<script>
+    const form = document.getElementById("modal-criteria-politica")
+    form.addEventListener("submit", (evt) => {
+        evt.preventDefault();
+
+        const formData = new FormData(evt.target);
+        const data = Object.fromEntries(formData.entries())
+        // save data
+        $.ajax({
+            data: {
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+                content: JSON.stringify(data),
+            },
+            type: "POST",
+            url: "{% url 'multipol:evaluacion_criterio_politica' estudio.id %}",
+
+            success: function (response) {
+                Swal.fire({
+                    title: "Éxito!",
+                    text: response.message,
+                    icon: "success"
+                })
+            },
+            error: function ({ responseJSON }) {
+                Swal.fire({
+                    title: "Ooops!",
+                    text: responseJSON?.message,
+                    icon: "error"
+                });
+            },
+        });
+    })
+    console.log(response)
+</script>
