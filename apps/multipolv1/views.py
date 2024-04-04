@@ -334,24 +334,32 @@ def evaluacion_criterio_accion(request, pk):
         response = json.loads(request.POST['content'])
         criterio = get_object_or_404(Criterio, pk=response.get("criterio", None))
         accion = get_object_or_404(Accion, pk=response.get("accion", None))
-        data = {
-          **response, 
-          "accion": accion,
-          "criterio": criterio,
-          "experto": request.user, 
-          "estudio": estudio
-        }
-        print(data)
-        EvaluacionCriterioAccion.objects.create(**data)
-        return JsonResponse({"message": "Evaluacion creada satisfactoriamente."})
-    except Exception as e:
-        print(e)
+
+        evaluacion = EvaluacionCriterioAccion.objects.get(criterio=criterio.pk, accion=accion.pk)
+
+        if evaluacion:
+          # actualiza la evaluacion con lo que viene en el response
+          evaluacion.puntuacion = response["puntuacion"]
+          evaluacion.opinion = response["opinion"]
+          evaluacion.save()
+          return JsonResponse({"message": "Evaluacion actualizada satisfactoriamente."})
+        else:
+          data = {
+            **response, 
+            "accion": accion,
+            "criterio": criterio,
+            "experto": request.user, 
+            "estudio": estudio
+          }
+
+          EvaluacionCriterioAccion.objects.create(**data)
+          return JsonResponse({"message": "Evaluacion creada satisfactoriamente."})
+        
+    except Exception:
         return JsonResponse(data={"message": "La evaluacion no pudo ser creada."}, status=404)
-  for eca in eval_ca:
-    print(eca.accion)
+
   context = {'acciones': acciones, 'criterios': criterios, 'estudio': estudio, 'evaluacion_ca': eval_ca}
   return render(request, 'multipol/evaluaciones/evaluacion_criterio_accion.html', context)
-
 
 def evaluacion_criterio_politica(request, pk):
   estudio = get_object_or_404(EstudioMultipol, id=pk)

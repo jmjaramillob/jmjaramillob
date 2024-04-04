@@ -1,5 +1,9 @@
-{% extends 'base.html' %} {% load staticfiles %} {% block title %}Evaluación
-Criterio Política{% endblock %} {% block extra_css %}
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+Evaluación Criterio Política
+{% endblock %}
+{% block extra_css %}
 <style>
   .example-modal .modal {
     position: relative;
@@ -15,7 +19,8 @@ Criterio Política{% endblock %} {% block extra_css %}
     background: transparent !important;
   }
 </style>
-{% endblock %} {% block content %}
+{% endblock %}
+{% block content %}
 
 <div class="row">
   <!-- left column -->
@@ -88,8 +93,9 @@ Criterio Política{% endblock %} {% block extra_css %}
           <table class="table table-bordered">
             <thead>
               <tr>
-                <td></td>
-                {% for politica in politicas %}
+                <th scope="id">
+                  </td>
+                  {% for politica in politicas %}
                 <td>{{ politica.short_name }}</td>
                 {% endfor %}
               </tr>
@@ -102,29 +108,28 @@ Criterio Política{% endblock %} {% block extra_css %}
                 <td class="eval">
                   <div class="input-group">
                     <span class="input-group-btn">
+                      {% if evaluacion_cp %}
                       <button type="button" name="boton-eval" data-politica="{{ politica.id }}"
                         data-politica-name="{{ politica.short_name }}" data-criterio-name="{{ criterio.short_name }}"
                         data-criterio="{{ criterio.id }}" id="{{ politica.id }}-{{ criterio.id }}"
                         class="btn btn-success show-criteria-action" data-toggle="modal" data-target="#modal-default">
-                        {% if evaluacion_ca %}
-                        {% for eca in evaluacion_ca %}
-                        {% if eca.politica.id == politica.id and eca.criterio.id == criterio.id %}
-                        {{ eca.puntuacion }}
+
+                        {% for ecp in evaluacion_cp %}
+                        {% if ecp.politica.id == politica.id and ecp.criterio.id == criterio.id %}
+                        {{ ecp.puntuacion }}
                         {% else %}
                         <i class="fa fa-check"></i>
                         {% endif %}
                         {% endfor %}
 
-                        {% else %}
-                        <i class="fa fa-check"></i>
-                        {% endif %}
                       </button>
+                      {% else %}
 
+                      {% endif %}
 
                     </span>
 
                   </div>
-
                 </td>
                 {% endfor %}
               </tr>
@@ -132,6 +137,8 @@ Criterio Política{% endblock %} {% block extra_css %}
             </tbody>
           </table>
         </div>
+        {% endif %}
+        {% endif %}
       </div>
       <div class="box-footer">
         <!-- Buttons -->
@@ -159,40 +166,8 @@ Criterio Política{% endblock %} {% block extra_css %}
 {% block extra_js %}
 
 <script>
-  /*
-  var dataInput = document.querySelectorAll(".example");
-  var evaluacionesCP = [];
-
-  dataInput.forEach(function (value) {
-    value.addEventListener("blur", function (evt) {
-      var evaluacionCP = {
-        criterio: evt.target.dataset.criterio,
-        politica: evt.target.dataset.politica,
-        valoracionCP: evt.target.value,
-      };
-      evaluacionesCP.push(evaluacionCP);
-    });
-  });
-
-  $("#evaluation_form").submit(function (evt) {
-    evt.preventDefault();
-    $.ajax({
-      // create an AJAX call...
-      data: {
-        csrfmiddlewaretoken: "{{ csrf_token }}",
-        content: JSON.stringify(evaluacionesCP),
-      }, // get the form data
-      type: "POST", // GET or POST
-      url: "{% url 'multipol:evaluacion_criterio_politica' estudio.id %}", // the file to call
-      success: function (response) {
-        // on success..
-      },
-    });
-  });*/
-</script>
-
-<script>
   let botones_eval = document.querySelectorAll('button[name="boton-eval"]');
+
   botones_eval.forEach(eval => {
     eval.addEventListener("click", function (evt) {
       const form = document.querySelector(".modal-criteria-politica");
@@ -201,8 +176,8 @@ Criterio Política{% endblock %} {% block extra_css %}
       const politicaTxt = document.querySelector("#politica-name");
       const criterioTxt = document.querySelector("#criterio-name");
 
-
       const { politica, criterio, politicaName, criterioName } = evt.target.dataset;
+
       politicaInp.value = politica;
       criterioInp.value = criterio;
       politicaTxt.innerHTML = politicaName;
