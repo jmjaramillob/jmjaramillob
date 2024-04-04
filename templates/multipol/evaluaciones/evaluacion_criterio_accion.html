@@ -116,8 +116,8 @@
 
                       {% for eca in evaluacion_ca %}
                       {% if eca.accion.id == accion.id and eca.criterio.id == criterio.id %}
-                      <span data-puntuacion="{{ eca.puntuacion }}" data-opinion="{{ eca.opinion }}"
-                        id="eca_puntuacion">{{ eca.puntuacion }}</span>
+                      <span data-evaluacion="{{eca.id}}" data-puntuacion="{{ eca.puntuacion }}"
+                        data-opinion="{{ eca.opinion }}" id="eca_puntuacion">{{ eca.puntuacion }}</span>
                       {% else %}
 
                       {% endif %}
@@ -211,13 +211,12 @@
       const accionTxt = document.querySelector("#accion-name");
       const criterioTxt = document.querySelector("#criterio-name");
 
-      const puntuationElem = evt.target.children.eca_puntuacion;
+      const puntuationElem = document.getElementById("eca_puntuacion");
       const opinionElem = evt.target.children.eca_opinion;
 
       if (puntuationElem) {
-        puntuacionInp.value = puntuationElem.dataset.puntuacion;
-        opinionInp.value = opinionElem.dataset.opinion;
-
+        const { puntuacion, evaluacion } = puntuationElem.dataset
+        puntuacionInp.value = puntuacion;
       }
 
       const { accion, criterio, accionName, criterioName } = evt.target.dataset;
