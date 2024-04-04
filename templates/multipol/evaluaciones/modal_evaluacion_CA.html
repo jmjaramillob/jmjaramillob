@@ -12,22 +12,23 @@
 
                 <form class="form modal-criteria-action" id="modal-criteria-action" method="post"
                     action="{% url 'multipol:evaluacion_criterio_accion' estudio.id %}">
+                    <input type="hidden" name="evaluacion" value="" />
                     <p>
 
-                        <label for="acciones">Accion: <span id="accion-name"></span></label>
+                        <span>Accion: <span id="accion-name"></span></span>
                         <input type="hidden" id="acciones" name="accion" />
 
                     </p>
                     <p>
-                        <label for="criterios">Criterio: <span id="criterio-name"></span></label>
-                        <input type="hidden" aria-hidden="true" id="criterios" name="criterio" />
+                        <span>Criterio: <span id="criterio-name"></span></span>
+                        <input type="hidden" id="criterios" name="criterio" />
                     </p>
                     <p>
-                        <label>Valoración: </label>
-                        <input type="number" id="puntuacion" name="puntuacion" value="0" />
+                        <label for="puntuacion">Valoración: </label>
+                        <input type="number" id="puntuacion" name="puntuacion" value="0" max="20" min="0" />
                     </p>
                     <p>
-                        <label>Opinión: </label>
+                        <label for="opinion">Opinión: </label>
                         <input type="textarea" id="opinion" name="opinion" />
                     </p>
 
