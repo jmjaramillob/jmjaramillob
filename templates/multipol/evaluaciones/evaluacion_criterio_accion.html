@@ -127,7 +127,14 @@
 
                     </button>
                     {% else %}
-                    <h1>No existen variables para realizar la evaluacion</h1>
+                    <button type="button" name="boton-eval" data-accion="{{ accion.id }}"
+                      data-accion-name="{{ accion.short_name }}" data-criterio-name="{{ criterio.short_name }}"
+                      data-criterio="{{ criterio.id }}" id="{{ accion.id }}-{{ criterio.id }}"
+                      class="btn btn-success show-criteria-action" data-toggle="modal" data-target="#modal-default">
+
+                      <span class="fa fa-check"></span>
+
+                    </button>
                     {% endif %}
 
 
