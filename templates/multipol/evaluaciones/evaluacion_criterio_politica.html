@@ -190,15 +190,18 @@ Evaluación Criterio Política
           const puntuationElem = document.getElementById("ecp_puntuacion");
           const opinionElem = evt.target.children.ecp_opinion;
 
+
           if (puntuationElem) {
             const { puntuacion, evaluacion } = puntuationElem.dataset
             puntuacionInp.value = puntuacion;
           }
 
+          const { politica, criterio, politicaName, criterioName } = evt.target.dataset;
           politicaInp.value = politica;
           criterioInp.value = criterio;
           politicaTxt.innerHTML = politicaName;
           criterioTxt.innerHTML = criterioName;
+          console.log(politicaName, criterioName)
         })
       });
     </script>
