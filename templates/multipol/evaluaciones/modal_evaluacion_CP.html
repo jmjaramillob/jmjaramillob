@@ -8,28 +8,28 @@
                 <h4 class="modal-title">Valoración Política/Criterio</h4>
             </div>
             <div class="modal-body">
-                <form class="form" method="post" action="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}">
+                <form class="form modal-criteria-politica" id="modal-criteria-politica" method="post"
+                    action="{% url 'multipol:evaluacion_criterio_politica' estudio.id %}">
+                    <input type="hidden" name="evaluacion" value="" />
+                    <p>
+                    <p>
+                        <span>Política: <span id="politica-name"></span></span>
+                        <input type="hidden" id="politicas" name="politica" />
+                    </p>
+                    <p>
+                        <span>Criterio: <span id="criterio-name"></span></span>
+                        <input type="hidden" id="criterios" name="criterio" />
+                    </p>
+                    <p>
+                        <label for="puntuacion">Valoración: </label>
+                        <input type="number" id="puntuacion" name="puntuacion" value="0" max="20" min="0" />
+                    </p>
+                    <p>
+                        <label for="opinion">Opinión: </label>
+                        <input type="textarea" id="opinion" name="opinion" />
+                    </p>
+
                 </form>
-                {% csrf_token %}
-                <p>
-                    <label>Política: <span id="politica-name"></span></label>
-                    <input type="hidden" id="politicas" name="politica" />
-                </p>
-                <p>
-                    <label>Criterio: <span id="criterio-name"></span></label>
-                    <input type="text" name="criterios" value="{{ criterio.short_name }}" />
-                </p>
-                <p>
-                    <label>Valoración: </label>
-                    <input type="number" id="puntuacion" name="puntuacion" value="0" />
-                </p>
-                <p>
-                    <label>Opinión: </label>
-                    <input type="textarea" id="opinion" name="opinion" />
-                </p>
-                <p>
-                    <button><i class="fa-address-book"></i></button>
-                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar
@@ -63,6 +63,8 @@
                     title: "Éxito!",
                     text: response.message,
                     icon: "success"
+                }).then(() => {
+                    window.location.reload()
                 })
             },
             error: function ({ responseJSON }) {

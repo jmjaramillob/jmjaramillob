@@ -418,23 +418,29 @@ def evaluacion_criterio_politica(request, pk):
             response = json.loads(request.POST["content"])
             criterio = get_object_or_404(Criterio, pk=response.get("criterio", None))
             politica = get_object_or_404(Politica, pk=response.get("politica", None))
-            data = {
-                **response,
-                "politica": politica,
-                "criterio": criterio,
-                "experto": request.user,
-                "estudio": estudio,
-            }
-            print(data)
-            EvaluacionCriterioPolitica.objects.create(**data)
-            return JsonResponse({"message": "Evaluacion creada satisfactoriamente."})
-        except Exception as e:
-            print(e)
-            return JsonResponse(
-                data={"message": "La evaluacion no pudo ser creada."}, status=404
+
+            evaluacion, created = EvaluacionCriterioPolitica.objects.get_or_create(
+                criterio=criterio,
+                politica=politica,
+                defaults={"experto": request.user, "estudio": estudio},
             )
-    for ecp in eval_cp:
-        print(ecp.politica)
+
+            evaluacion.puntuacion = response["puntuacion"]
+            evaluacion.opinion = response["opinion"]
+            evaluacion.save()
+
+            message = (
+                "Evaluacion actualizada satisfactoriamente."
+                if not created
+                else "Evaluacion creada satisfactoriamente."
+            )
+
+            return JsonResponse({"message": message})
+        except Exception:
+            return JsonResponse(
+                data={"message": "La evaluacion al ser procesada."}, status=404
+            )
+
     context = {
         "politicas": politicas,
         "criterios": criterios,
