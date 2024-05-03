@@ -453,7 +453,7 @@ def evaluacion_criterio_politica(request, pk):
     )
 
 
-def llenar_matriz_evaluacionCA(request, pk):
+def evaluacion_accion_politica(request, pk):
     # consenso = verificar_consenso(request, idEstudio)
     evaluacionesCA = EvaluacionCriterioAccion.objects.filter(estudio=pk).values()
     evaluacionesCA = list(evaluacionesCA)
@@ -465,8 +465,8 @@ def llenar_matriz_evaluacionCA(request, pk):
     # Este for se utiliza para calcular los valores de la relacion entre cada accion y politica
     for i in range(len(evaluacionesCA)):
         for j in range(len(evaluacionesCP)):
-            puntuacion_total = puntuacion_total + evaluacionesCA[i] * (
-                evaluacionesCP[j] * 100
+            puntuacion_total = puntuacion_total + evaluacionesCA[i].puntuacion * (
+                evaluacionesCP[j].puntuacion * 100
             )
 
     for eca in evaluacionesCA:
