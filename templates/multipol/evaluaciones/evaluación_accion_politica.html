@@ -2,73 +2,73 @@
 {% load staticfiles %}
 {% block title %}Evaluación Criterio Acción{% endblock %}
 {% block extra_css %}
-    <style>
-        .example-modal .modal {
-            position: relative;
-            top: auto;
-            bottom: auto;
-            right: auto;
-            left: auto;
-            display: block;
-            z-index: 1;
-        }
+<style>
+    .example-modal .modal {
+        position: relative;
+        top: auto;
+        bottom: auto;
+        right: auto;
+        left: auto;
+        display: block;
+        z-index: 1;
+    }
 
-        .example-modal .modal {
-            background: transparent !important;
-        }
-    </style>
+    .example-modal .modal {
+        background: transparent !important;
+    }
+</style>
 {% endblock %}
 {% block content %}
-    <div class="row">
-        <!-- left column -->
-        <div class="col-md-8">
-            <!-- general form elements -->
-            <div class="box-header with-border">
-                <h3 class="box-title">Tabla de evaluación de acciones respecto a políticas</h3>
-            </div>
-            <div class="box-body">
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-8">
+        <!-- general form elements -->
+        <div class="box-header with-border">
+            <h3 class="box-title">Tabla de evaluación de acciones respecto a políticas</h3>
+        </div>
+        <div class="box-body">
 
-                <table class="table table-bordered ">
+            <table class="table table-bordered ">
 
-                    <thead>
+                <thead>
                     <tr>
                         <td></td>
                         {% for accion in acciones %}
-                            <td>{{ accion.shortNameA }}</td>
+                        <td>{{ accion.short_name }}</td>
                         {% endfor %}
                     </tr>
-                    </thead>
-                    <tbody>
+                </thead>
+                <tbody>
                     {% for politica in politicas %}
-                        <tr>
-                            <td>{{ politica.shortNameP }}</td>
-                            {% for accion in acciones %}
-                                <td>
-                                        <input type="text" name="q" class="form-control" placeholder="">
+                    <tr>
+                        <td>{{ politica.short_name }}</td>
+                        {% for accion in acciones %}
+                        <td>
+                            <input type="text" name="q" class="form-control" placeholder="">
 
-                                </td>
-                            {% endfor %}
-                        </tr>
+                        </td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="box-footer">
+            <!-- Buttons -->
+
+            <div class="col-lg-offset-3 col-lg-9">
+                <button type="submit" id="guardar_eval" class="btn btn-success"><i class="fa fa-save"> </i>Guardar
+                </button>
+                <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default"><i
+                        class="fa fa-arrow-circle-left"> </i>Regresar</a>
             </div>
 
-
-            <div class="box-footer">
-                <!-- Buttons -->
-
-                <div class="col-lg-offset-3 col-lg-9">
-                    <button type="submit" id="guardar_eval" class="btn btn-success"><i class="fa fa-save"> </i>Guardar
-                    </button>
-                    <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default"><i
-                            class="fa fa-arrow-circle-left"> </i>Regresar</a>
-                </div>
-
-                <div class="clearfix"></div>
-            </div>
+            <div class="clearfix"></div>
         </div>
     </div>
+</div>
 
 
 {% endblock %}

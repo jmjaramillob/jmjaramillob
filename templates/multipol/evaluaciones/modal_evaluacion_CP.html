@@ -32,9 +32,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar
-                </button>
-                <button type="button" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                <button type="submit" form="modal-criteria-politica" class="btn btn-primary">Guardar</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -49,6 +48,7 @@
 
         const formData = new FormData(evt.target);
         const data = Object.fromEntries(formData.entries())
+        console.log(data)
         // save data
         $.ajax({
             data: {
