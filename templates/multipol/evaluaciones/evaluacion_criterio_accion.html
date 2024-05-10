@@ -183,28 +183,6 @@
 
 {% endblock %}
 {% block extra_js %}
-<script>
-  // var dataObjects = document.querySelectorAll(".calificacion");
-  // var llenar_evaluacionesCA = [];
-
-  // $.ajax({
-  //   type: "GET",
-  //   url: "{% url 'multipol:llenar_evaluacionca' estudio.id %}",
-  //   success: function (response) {
-  //     llenar_evaluacionesCA = response.evaluacionesCA;
-  //     console.log("llegada sin el if " + llenar_evaluacionesCA[0].puntuacion);
-  //     if (!llenar_evaluacionesCA.length == 0) {
-  //       llenar(response);
-  //       console.log("Esta lleno");
-  //     } else {
-  //       console.log("Esta empty");
-  //     }
-  //   },
-  //   error: function (error) {
-  //     console.log("evaluacionesca algo salió mal" + error);
-  //   },
-  // });
-</script>
 
 <script>
   let botones_eval = document.querySelectorAll('button[name="boton-eval"]');
