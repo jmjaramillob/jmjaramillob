@@ -412,6 +412,15 @@ def evaluacion_criterio_politica(request, pk):
     criterios = Criterio.objects.filter(estudio=estudio.id)
     eval_cp = EvaluacionCriterioPolitica.objects.filter(estudio=estudio.id)
     # self.actualizar_informe(estudio)
+    sumas = []
+
+    if eval_cp:
+        for politica in politicas:
+            suma = 0
+            for ecp in eval_cp:
+                if politica == ecp.politica:
+                    suma = suma + ecp.puntuacion
+            sumas.append({'politica': politica, 'suma': suma})
 
     if request.method == "POST" or request.is_ajax():
         try:
@@ -446,6 +455,7 @@ def evaluacion_criterio_politica(request, pk):
         "criterios": criterios,
         "estudio": estudio,
         "evaluacion_cp": eval_cp,
+        "sumas": sumas
     }
 
     return render(
