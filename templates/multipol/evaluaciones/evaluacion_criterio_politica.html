@@ -93,6 +93,7 @@ Evaluación Criterio Política
               {% for criterio in criterios %}
               <td>{{ criterio.short_name }}</td>
               {% endfor %}
+              <td>Suma</td>
             </tr>
           </thead>
           <tbody>
@@ -135,6 +136,11 @@ Evaluación Criterio Política
                 </div>
 
               </td>
+              {% endfor %}
+              {% for s in sumas %}
+              {% if s.politica == politica %}
+              <td>{{ s.suma }}</td>
+              {% endif %}
               {% endfor %}
             </tr>
             {% endfor %}
