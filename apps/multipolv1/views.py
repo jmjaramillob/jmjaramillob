@@ -30,6 +30,8 @@ from apps.multipolv1.models import (
 from apps.proyecto.models import Proyecto, Tecnica
 from apps.proyecto.views import contexto_mensajes, obtener_tipo_usuario_estudio
 
+import numpy as np
+
 ####### GESTIÓN DE ESTUDIOS MULTIPOL ########################################################
 
 
@@ -420,7 +422,7 @@ def evaluacion_criterio_politica(request, pk):
             for ecp in eval_cp:
                 if politica == ecp.politica:
                     suma = suma + ecp.puntuacion
-            sumas.append({'politica': politica, 'suma': suma})
+            sumas.append({"politica": politica, "suma": suma})
 
     if request.method == "POST" or request.is_ajax():
         try:
@@ -455,7 +457,7 @@ def evaluacion_criterio_politica(request, pk):
         "criterios": criterios,
         "estudio": estudio,
         "evaluacion_cp": eval_cp,
-        "sumas": sumas
+        "sumas": sumas,
     }
 
     return render(
@@ -465,24 +467,67 @@ def evaluacion_criterio_politica(request, pk):
 
 def evaluacion_accion_politica(request, pk):
     # consenso = verificar_consenso(request, idEstudio)
+    estudio = get_object_or_404(EstudioMultipol, id=pk)
+    politicas = Politica.objects.filter(estudio=estudio.id)
+    acciones = Accion.objects.filter(estudio=estudio.id)
     evaluacionesCA = EvaluacionCriterioAccion.objects.filter(estudio=pk).values()
     evaluacionesCA = list(evaluacionesCA)
     evaluacionesCP = EvaluacionCriterioPolitica.objects.filter(estudio=pk).values()
     evaluacionesCP = list(evaluacionesCP)
-    evaluacionCA = {}
+    evaluacionCA = []
     puntuacion_total = 0
 
-    # Este for se utiliza para calcular los valores de la relacion entre cada accion y politica
-    for i in range(len(evaluacionesCA)):
-        for j in range(len(evaluacionesCP)):
-            puntuacion_total = puntuacion_total + evaluacionesCA[i].puntuacion * (
-                evaluacionesCP[j].puntuacion * 100
-            )
+    matriz_ca = []
 
-    for eca in evaluacionesCA:
+    for accion in acciones:
+        puntuaciones = []
+        for eca in evaluacionesCA:
+            if eca["accion_id"] == accion.id:
+                puntuaciones.append(eca["puntuacion"])
+        matriz_ca.append(puntuaciones)
+
+    matriz_cp = []
+
+    for politica in politicas:
+        puntuaciones = []
         for ecp in evaluacionesCP:
-            evaluacionCA["accion"]: eca.accion
-            evaluacionCA["politica"]: ecp.politica
+            if ecp["politica_id"] == politica.id:
+                puntuaciones.append(ecp["puntuacion"] / 100)
+        matriz_cp.append(puntuaciones)
 
-            evaluacionCA["puntuacion"]: eca.valoracion * (ecp.valoracion * 100)
-    return JsonResponse({"evaluacionesCA": evaluacionesCA})
+    matriz_ap = []
+    matriz_punt_ap = []
+    for ca in matriz_ca:
+        lista_aux = []
+        lista_aux_punt = []
+        for cp in matriz_cp:
+            suma = 0
+            for i in range(len(cp)):
+                suma = suma + ca[i] * cp[i]
+            lista_aux.append({"accion": ca[i], "politica": cp[i], "puntuacion": suma})
+            lista_aux_punt.append(suma)
+        matriz_ap.append(lista_aux)
+        matriz_punt_ap.append(lista_aux_punt)
+
+    # print(matriz_punt_ap)
+
+    promedio = []
+    desviacion_estandar = []
+    for ap in matriz_punt_ap:
+        promedio.append(sum(ap) / len(ap))
+        desviacion_estandar.append(np.std(ap))
+
+    print(promedio, desviacion_estandar)
+
+    context = {
+        "estudio": estudio,
+        "acciones": acciones,
+        "politicas": politicas,
+        "evaluacionCA": matriz_ap,
+        "promedio": promedio,
+        "desviacion": desviacion_estandar,
+    }
+
+    return render(
+        request, "multipol/evaluaciones/evaluacion_accion_politica.html", context
+    )
