@@ -29,7 +29,6 @@
         <div class="box-body">
 
             <table class="table table-bordered ">
-
                 <thead>
                     <tr>
                         <td></td>
@@ -44,13 +43,20 @@
                         <td>{{ politica.short_name }}</td>
                         {% for accion in acciones %}
                         <td>
-                            <input type="text" name="q" class="form-control" placeholder="">
 
+                            {% for eap in evaluacionCA %}
+                            {% for e in eap %}
+
+                            {{ e.puntuacion }}
+
+                            {% endfor %}
+                            {% endfor %}
                         </td>
                         {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
+
             </table>
         </div>
 
@@ -59,8 +65,8 @@
             <!-- Buttons -->
 
             <div class="col-lg-offset-3 col-lg-9">
-                <button type="submit" id="guardar_eval" class="btn btn-success"><i class="fa fa-save"> </i>Guardar
-                </button>
+                <button type="submit" id="guardar_eval" class="btn btn-success"><i class="fa fa-save">
+                    </i>Guardar</button>
                 <a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default"><i
                         class="fa fa-arrow-circle-left"> </i>Regresar</a>
             </div>
