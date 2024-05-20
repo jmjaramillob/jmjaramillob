@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% block title %}Evaluación Criterio Acción{% endblock %}
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/morris.css' %}">
 <style>
     .example-modal .modal {
         position: relative;
@@ -21,43 +22,69 @@
 {% block content %}
 <div class="row">
     <!-- left column -->
-    <div class="col-md-8">
+    <div class="col-md-12">
         <!-- general form elements -->
         <div class="box-header with-border">
             <h3 class="box-title">Tabla de evaluación de acciones respecto a políticas</h3>
         </div>
         <div class="box-body">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab_1" data-toggle="tab">Tabla Evaluación Acción/Política</a></li>
+                    <li><a href="#tab_2" data-toggle="tab">Mapa de Perfiles</a></li>
+                    <li><a href="#tab_3" data-toggle="tab">Mapa de Sensibilidad</a></li>
 
-            <table class="table table-bordered ">
-                <thead>
-                    <tr>
-                        <td></td>
-                        {% for accion in acciones %}
-                        <td>{{ accion.short_name }}</td>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for politica in politicas %}
-                    <tr>
-                        <td>{{ politica.short_name }}</td>
-                        {% for accion in acciones %}
-                        <td>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_1">
+                        <table class="table table-bordered ">
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    {% for accion in acciones %}
+                                    <td>{{ accion.short_name }}</td>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for politica in politicas %}
+                                <tr>
+                                    <td>{{ politica.short_name }}</td>
+                                    {% for accion in acciones %}
+                                    <td>
 
-                            {% for eap in evaluacionCA %}
-                            {% for e in eap %}
+                                        {% for eap in evaluacionAP %}
+                                        {% for e in eap %}
 
-                            {{ e.puntuacion }}
+                                        {{ e.puntuacion }}
 
-                            {% endfor %}
-                            {% endfor %}
-                        </td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
+                                        {% endfor %}
+                                        {% endfor %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
 
-            </table>
+                        </table>
+                    </div><!-- /.tab-pane -->
+                    <div class="tab-pane" id="tab_2">
+                        <div class="box-body chart-responsive">
+                            <div class="chart" id="line-chart" style="height: 250px;"></div>
+                        </div>
+                    </div><!-- /.tab-pane -->
+                    <div class="tab-pane" id="tab_3">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                        It has survived not only five centuries, but also the leap into electronic typesetting,
+                        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+                        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                        like Aldus PageMaker including versions of Lorem Ipsum.
+                    </div><!-- /.tab-pane -->
+                </div><!-- /.tab-content -->
+            </div><!-- nav-tabs-custom -->
+
         </div>
 
 
@@ -76,5 +103,40 @@
     </div>
 </div>
 
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="{% static 'js/morris.min.js' %}"></script>
+<script>
+    $(function () {
+        "use strict";
+        console.log("{{ matriz }}");
 
+        // LINE CHART
+        var line = new Morris.Line({
+            element: 'line-chart',
+            resize: true,
+
+            data: [
+                { politica: '2011 Q1', accion: 2666 },
+                { politica: '2011 Q2', accion: 2778 },
+                { politica: '2011 Q3', accion: 4912 },
+                { politica: '2011 Q4', accion: 3767 },
+                { politica: '2012 Q1', accion: 6810 },
+                { politica: '2012 Q2', accion: 5670 },
+                { politica: '2012 Q3', accion: 4820 },
+                { politica: '2012 Q4', accion: 15073 },
+                { politica: '2013 Q1', accion: 10687 },
+                { politica: '2013 Q2', accion: 8432 }
+            ],
+            xkey: 'politica',
+            ykeys: ['accion'],
+            labels: ['accion'],
+            lineColors: ['#3c8dbc'],
+            hideHover: 'auto'
+        });
+
+
+    });
+</script>
 {% endblock %}
