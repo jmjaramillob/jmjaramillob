@@ -504,7 +504,7 @@ def evaluacion_accion_politica(request, pk):
             suma = 0
             for i in range(len(cp)):
                 suma = suma + ca[i] * cp[i]
-            lista_aux.append({"accion": ca[i], "politica": cp[i], "puntuacion": suma})
+            lista_aux.append({'accion': ca[i], 'politica': cp[i], 'puntuacion': suma})
             lista_aux_punt.append(suma)
         matriz_ap.append(lista_aux)
         matriz_punt_ap.append(lista_aux_punt)
@@ -523,7 +523,8 @@ def evaluacion_accion_politica(request, pk):
         "estudio": estudio,
         "acciones": acciones,
         "politicas": politicas,
-        "evaluacionCA": matriz_ap,
+        "evaluacionAP": matriz_ap,
+        "matriz": matriz_punt_ap,
         "promedio": promedio,
         "desviacion": desviacion_estandar,
     }
