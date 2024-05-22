@@ -478,21 +478,25 @@ def evaluacion_accion_politica(request, pk):
     puntuacion_total = 0
 
     matriz_ca = []
-
+    array_acciones = []
     for accion in acciones:
         puntuaciones = []
+        array_acciones.append(accion.short_name)
         for eca in evaluacionesCA:
             if eca["accion_id"] == accion.id:
-                puntuaciones.append(eca["puntuacion"])
+                puntuaciones.append({"accion": accion, "puntuacion": eca["puntuacion"]})
         matriz_ca.append(puntuaciones)
 
     matriz_cp = []
-
+    array_politicas = []
     for politica in politicas:
         puntuaciones = []
+        array_politicas.append(politica.short_name)
         for ecp in evaluacionesCP:
             if ecp["politica_id"] == politica.id:
-                puntuaciones.append(ecp["puntuacion"] / 100)
+                puntuaciones.append(
+                    {"politica": politica, "puntuacion": ecp["puntuacion"] / 100}
+                )
         matriz_cp.append(puntuaciones)
 
     matriz_ap = []
@@ -503,8 +507,14 @@ def evaluacion_accion_politica(request, pk):
         for cp in matriz_cp:
             suma = 0
             for i in range(len(cp)):
-                suma = suma + ca[i] * cp[i]
-            lista_aux.append({'accion': ca[i], 'politica': cp[i], 'puntuacion': suma})
+                suma = suma + ca[i]["puntuacion"] * cp[i]["puntuacion"]
+            lista_aux.append(
+                {
+                    "accion": ca[i]["accion"],
+                    "politica": cp[i]["politica"],
+                    "puntuacion": suma,
+                }
+            )
             lista_aux_punt.append(suma)
         matriz_ap.append(lista_aux)
         matriz_punt_ap.append(lista_aux_punt)
@@ -524,6 +534,8 @@ def evaluacion_accion_politica(request, pk):
         "acciones": acciones,
         "politicas": politicas,
         "evaluacionAP": matriz_ap,
+        "array_politicas": array_politicas,
+        "array_acciones": array_acciones,
         "matriz": matriz_punt_ap,
         "promedio": promedio,
         "desviacion": desviacion_estandar,
