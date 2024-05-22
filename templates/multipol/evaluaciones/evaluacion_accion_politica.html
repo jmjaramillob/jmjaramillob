@@ -41,23 +41,23 @@
                             <thead>
                                 <tr>
                                     <td></td>
-                                    {% for accion in acciones %}
-                                    <td>{{ accion.short_name }}</td>
+                                    {% for politica in politicas %}
+                                    <td>{{ politica.short_name }}</td>
                                     {% endfor %}
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for politica in politicas %}
+                                {% for accion in acciones %}
                                 <tr>
-                                    <td>{{ politica.short_name }}</td>
-                                    {% for accion in acciones %}
+                                    <td>{{ accion.short_name }}</td>
+                                    {% for politica in politicas %}
                                     <td>
 
                                         {% for eap in evaluacionAP %}
                                         {% for e in eap %}
-
+                                        {% if accion.id == e.accion.id and politica.id == e.politica.id %}
                                         {{ e.puntuacion }}
-
+                                        {% endif %}
                                         {% endfor %}
                                         {% endfor %}
                                     </td>
@@ -70,7 +70,7 @@
                     </div><!-- /.tab-pane -->
                     <div class="tab-pane" id="tab_2">
                         <div class="box-body chart-responsive">
-                            <div class="chart" id="line-chart" style="height: 250px;"></div>
+                            <canvas id="grafica" height="100px"></canvas>
                         </div>
                     </div><!-- /.tab-pane -->
                     <div class="tab-pane" id="tab_3">
@@ -105,38 +105,46 @@
 
 {% endblock %}
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script src="{% static 'js/morris.min.js' %}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
 <script>
-    $(function () {
-        "use strict";
-        console.log("{{ matriz }}");
+    const politicas = {{ array_politicas| safe }}
+    console.log(politicas)
+    const acciones = {{ array_acciones| safe }}
+    const puntuacion = {{ matriz| safe }}
+    const labels = politicas
+    console.log(puntuacion)
+    let dataset_acciones = []
+    console.log(labels)
+    for (var i = 0; i < acciones.length; i++) {
+        var simbolos, color;
+        simbolos = "0123456789ABCDEF";
+        color = "#";
 
-        // LINE CHART
-        var line = new Morris.Line({
-            element: 'line-chart',
-            resize: true,
-
-            data: [
-                { politica: '2011 Q1', accion: 2666 },
-                { politica: '2011 Q2', accion: 2778 },
-                { politica: '2011 Q3', accion: 4912 },
-                { politica: '2011 Q4', accion: 3767 },
-                { politica: '2012 Q1', accion: 6810 },
-                { politica: '2012 Q2', accion: 5670 },
-                { politica: '2012 Q3', accion: 4820 },
-                { politica: '2012 Q4', accion: 15073 },
-                { politica: '2013 Q1', accion: 10687 },
-                { politica: '2013 Q2', accion: 8432 }
-            ],
-            xkey: 'politica',
-            ykeys: ['accion'],
-            labels: ['accion'],
-            lineColors: ['#3c8dbc'],
-            hideHover: 'auto'
+        for (var j = 0; j < 6; j++) {
+            color = color + simbolos[Math.floor(Math.random() * 16)];
+        }
+        dataset_acciones.push({
+            label: acciones[i],
+            data: puntuacion[i],
+            borderColor: color,
+            fill: false,
+            tension: 0.1
         });
+    }
 
 
-    });
+    const graph = document.querySelector("#grafica");
+
+    const data = {
+        labels: labels,
+        datasets: dataset_acciones
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+    };
+
+    new Chart(graph, config);
 </script>
 {% endblock %}
