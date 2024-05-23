@@ -74,13 +74,9 @@
                         </div>
                     </div><!-- /.tab-pane -->
                     <div class="tab-pane" id="tab_3">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                        It has survived not only five centuries, but also the leap into electronic typesetting,
-                        remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-                        like Aldus PageMaker including versions of Lorem Ipsum.
+                        <div class="box-body chart-responsive">
+                            <canvas id="grafica_mapa_sensibilidad" height="100px"></canvas>
+                        </div>
                     </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
             </div><!-- nav-tabs-custom -->
@@ -108,13 +104,12 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
 <script>
     const politicas = {{ array_politicas| safe }}
-    console.log(politicas)
     const acciones = {{ array_acciones| safe }}
     const puntuacion = {{ matriz| safe }}
     const labels = politicas
-    console.log(puntuacion)
+
     let dataset_acciones = []
-    console.log(labels)
+
     for (var i = 0; i < acciones.length; i++) {
         var simbolos, color;
         simbolos = "0123456789ABCDEF";
@@ -146,5 +141,52 @@
     };
 
     new Chart(graph, config);
+</script>
+<script>
+
+    const desviacion = {{ desviacion| safe}}
+    const accion = {{ array_acciones| safe }}
+
+    let dataset_accion = []
+
+    for (var i = 0; i < accion.length; i++) {
+        var simbolos, color;
+        simbolos = "0123456789ABCDEF";
+        color = "#";
+
+        for (var j = 0; j < 6; j++) {
+            color = color + simbolos[Math.floor(Math.random() * 16)];
+        }
+        dataset_accion.push({
+            label: accion[i],
+            data: desviacion[i],
+            borderColor: color,
+            backgroundColor: Utils.transparentize(color, 0.5),
+        })
+        console.log(color)
+    }
+    console.log(dataset_accion)
+    const graphic = document.querySelector("#grafica_mapa_sensibilidad");
+
+    const datas = { datasets: dataset_accion };
+
+    const conf = {
+        type: 'scatter',
+        data: datas,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Mapa de sensibilidad'
+                }
+            }
+        },
+    };
+
+    new Chart(graphic, conf);
 </script>
 {% endblock %}
