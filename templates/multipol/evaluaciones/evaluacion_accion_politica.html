@@ -146,6 +146,7 @@
 
     const desviacion = {{ desviacion| safe}}
     const accion = {{ array_acciones| safe }}
+    const promedio = {{ promedio| safe }}
 
     let dataset_accion = []
 
@@ -157,13 +158,14 @@
         for (var j = 0; j < 6; j++) {
             color = color + simbolos[Math.floor(Math.random() * 16)];
         }
+
         dataset_accion.push({
             label: accion[i],
-            data: desviacion[i],
+            data: [{ x: desviacion[i], y: promedio[i] }],
             borderColor: color,
-            backgroundColor: Utils.transparentize(color, 0.5),
+            backgroundColor: color,
         })
-        console.log(color)
+
     }
     console.log(dataset_accion)
     const graphic = document.querySelector("#grafica_mapa_sensibilidad");
