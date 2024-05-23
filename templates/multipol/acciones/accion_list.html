@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Listado de acciones{% endblock %}
+{% block breadcrumbs %}Home/Acciones{% endblock %}
+{% block content %}
+
+<div class="alert-msg">
+
+</div>
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h3 class="box-title">Acciones</h3>
+	</div>
+	<!-- /.box-header -->
+
+	<div class="box-body">
+		{% if acciones %}
+		<table class="table table-bordered" id="tabla-acciones">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Nombre Corto</th>
+					<th>Nombre largo</th>
+					<th>Descripción</th>
+					<th>Funciones</th>
+				</tr>
+			</thead>
+			<tbody class="content-acciones">
+				{% for accion in acciones %}
+
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td>{{ accion.short_name }}</td>
+					<td>{{ accion.long_name }}</td>
+					<td>{{ accion.description }}</td>
+					<td>
+						<a class="btn btn-warning" name="{{ accion.id }}" title="Editar"
+							href="{% url 'multipol:editar_accion' accion.id %}">
+							<i class="fa fa-pencil"></i>
+						</a>
+						<button class="btn btn-danger" title="Eliminar" id="button_delete_accion" name="boton_eliminar"
+							data-idaccion="{{ accion.id }}" data-toggle="modal" data-target="#modal-delete-accion">
+							<i class="fa fa-trash" data-idaccion="{{ accion.id }}"></i>
+						</button>
+					</td>
+				</tr>
+
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<h3>No existen acciones en la base de datos, por favor ingrese una nueva
+			acción</h3>
+		{% endif %}
+	</div>
+	<div class="box-footer">
+		<!-- Buttons -->
+		<div class="form-group">
+			<div class="col-lg-offset-3 col-lg-9">
+				<a href="{% url 'multipol:add_accion' estudio.id %}">
+					<button type="button" class="btn btn-success">Agregar Acción</button>
+				</a>
+				<button type="button" class="btn btn-default">Importar</button>
+				<button type="button" class="btn btn-default">Exportar</button>
+				<a href="{% url 'multipol:detalle_estudio' estudio.id %}" class="btn btn-default"><i
+						class="fa fa-arrow-circle-left"> </i>Regresar</a>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+
+<!-- MODAL PARA EDITAR ACCIONES -->
+<div class="modal fade" id="modal-edit-accion">
+	{% include 'multipol/includes/modal_editar_accion.html' %}
+</div>
+
+<!-- MODAL ELIMINAR ACCIONES -->
+<div class="modal fade" id="modal-delete-accion">
+	{% include 'multipol/includes/accion_confirm_delete.html' %}
+</div>
+<!-- /.modal -->
+
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+	//Script para borrar una acción
+	var botones_delete = document.querySelectorAll("#button_delete_accion");
+	var id_accion_delete = [];
+	botones_delete.forEach(function (value) {
+		value.addEventListener('click', function (evt) {
+			id_accion_delete.push({ id_accion: evt.target.dataset.idaccion });
+			//console.log(id_accion_delete);
+		});
+
+	});
+
+	$('#confirm_delete_form').submit(function (evt) {
+		evt.preventDefault();
+		$.ajax({
+			data: {
+				csrfmiddlewaretoken: '{{ csrf_token }}',
+				content: JSON.stringify(id_accion_delete)
+			},
+			type: "POST",
+			url: "{% url 'multipol:borrar_accion' estudio.id %}",
+			success: function (data) {
+				$("#modal-delete-accion").modal("hide");
+				$(".alert-msg").html('' +
+					'<div class="alert alert-success alert-dismissible">\n' +
+					' <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;' +
+					' </button>\n' +
+					' <h4><i class="icon fa fa-check"></i> Alerta!</h4>\n' +
+					' Se eliminó la acción seleccionada.\n' +
+					'</div>');
+
+				$(".content-acciones").html(data.html_data);
+			}
+		});
+	});
+</script>
+{% endblock %}

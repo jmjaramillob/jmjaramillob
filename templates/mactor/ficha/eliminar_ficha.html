@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if ficha.idActorX.idEstudio.estado and usuario != 'EXPERTO' and usuario != '' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Eliminar Ficha de estrategias</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+										<!-- Form starts.  -->
+                                    <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+                                        <h3>¿Desea eliminar esta ficha de estrategias?</h3>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Estrategias del actor</label>
+                                                    <input class="form-control" readonly value="{{ ficha.idActorY }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Sobre el actor</label>
+                                                    <input class="form-control" readonly value="{{ ficha.idActorX }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Estrategias</label>
+                                                    <textarea class="form-control" rows="5" readonly>{{ ficha.estrategia }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3" style="align-content: center">
+                                                <a class="btn btn-success" href="{% url 'mactor:fichas' ficha.idActorX.idEstudio.id %}"><i class="fa fa-arrow-left"></i> Cancelar</a>
+                                                <button type="submit" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash"></i> Si, eliminar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+

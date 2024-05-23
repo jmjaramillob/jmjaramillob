@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if idea.idEstudio.estado and idea.idCreador.id == request.user.id or request.user in idea.idEstudio.idCoordinadores.all %}
+        {% if idea.estado is False %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Eliminar Idea</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+										<!-- Form starts.  -->
+                                    <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                        <div style="text-align: center" class="jumbotron row col-md-10 col-md-offset-1">
+                                            <p>La idea: {{ idea.titulo }} cuenta con {{ valoracionesIdea }} valoraciones de los expertos.</p>
+                                            <p>¿Esta seguro de querer eliminarla?</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'abaco:ideas' idea.idEstudio.id %}"><i class="fa fa-arrow-left"></i> Cancelar</a>
+                                                <button type="submit" class="btn btn-danger" title="Eliminar"><i class="fa fa-trash"></i> Si, eliminar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+</div>
+        {% else %}
+            <div class="alert alert-info alert-dismissible col-md-11">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4><i class="icon fa fa-info"></i></h4>
+                <h3>Esta idea será o fue empleada dentro de las valoraciones del estudio, por tanto no puede ser eliminada.
+                    <br>
+                    Gracias por participar.
+                </h3>
+            </div>
+            <div class="form-group">
+                <div class="col-md-8 col-md-offset-3">
+                    <a class="btn btn-success" href="{% url 'abaco:ideas' idea.idEstudio.id %}" title="Lista de ideas"><i class="fa fa-arrow-left"></i> Atrás</a>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+

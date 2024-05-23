@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-md-8 col-md-offset-1">
+        <div class="form-group">
+            <p>
+                <a class="btn btn-primary" title="Estudios MACTOR registrados" style="float: right; margin-top: 8px" data-toggle="collapse" href="#collapse_tabla_estudios_registrados" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fa fa-bank"></i> Banco de estudios MACTOR
+                </a>
+            </p>
+            <br>
+            <br>
+            <div class="collapse" id="collapse_tabla_estudios_registrados">
+                <div class="card card-body">
+                    {% if banco_estudios %}
+                        <table id="tabla_estudios_registrados" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for mactor in banco_estudios %}
+                                <tr>
+                                    <td>{{mactor.titulo}}</td>
+                                    <td>{{mactor.descripcion|truncatechars:50}}</td>
+                                    <td>
+                                        <a id="mactor{{mactor.id}}" class="btn btn-primary" title="Importar actores del estudio"><i class="fa fa-arrow-circle-o-down"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h3>No existen estudios MACTOR donde ejerza el rol de administrador o coordinador.</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

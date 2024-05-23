@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+ {% block extra_css %}
+     <!-- Css para grafos -->
+    <link rel="stylesheet" href="{% static 'css/vis-network.min.css' %}">
+ {% endblock%}
+
+{% block content %}
+
+    {% if usuario != '' %}
+        {% if expertos %}
+		    <input hidden class="col-sm-1" type="number" name="idEstudio" value="0{{estudio.id}}">
+        {% else %}
+            <input hidden class="col-sm-1" type="number" name="idEstudio" value="{{estudio.id}}">
+        {% endif %}
+
+        {% if expertos and usuario == 'EXPERTO' %}
+            <h2>No cuenta con permisos para acceder a esta página</h2>
+        {% else %}
+            <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">Grafo de Convergencias de los actores {{ numero_matriz }}CAA</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <br>
+
+                    <div id="mynetwork" style="width: 100%; height: 450px"></div>
+
+                <script src="{% static 'js/jquery.min.js' %}"></script>
+
+                <script type="text/javascript">
+
+                var idEstudio = $('input[name="idEstudio"]').val();
+                var lista_nodos = [];
+                var lista_edges = [];
+                $.ajax(
+                    {
+                        data : {'numero_matriz' : {{ numero_matriz }},
+                                'estudio': idEstudio
+                                },
+                        url: 'datos_grafo_caa',
+                        type: 'get',
+                        success: function (data)
+                        {
+                            var object = JSON.parse(data);
+
+                            for(var j=0; j<object.nodos_id.length; j++)
+                            {
+                                var nodo = {id: object.nodos_id[j], label: object.nodos_labels[j], title: object.nodos_tooltips[j]};
+                                lista_nodos.push(nodo);
+                            }
+
+                            for(var i=0; i<object.edge_origenes.length; i++)
+                            {
+                                var edge = {from: object.edge_origenes[i],
+                                            to: object.edge_destinos[i],
+                                            label: object.edge_labels[i],
+                                            value: object.edge_labels[i],
+                                            font: {align: 'horizontal'}};
+                                lista_edges.push(edge);
+                            }
+
+                            generar();
+                        },
+                        error: function()
+                        {
+                            console.log("Error no se puede graficar")
+                        }
+                    });
+
+              function generar()
+              {
+                  var container = document.getElementById('mynetwork');
+                  var data =
+                      {
+                    nodes: lista_nodos,
+                    edges: lista_edges
+                      };
+                  var options = {physics:false};
+                  var network = new vis.Network(container, data, options);
+
+              }
+
+    </script>
+
+                <br>
+                {% if expertos %}
+                    <div class="alert alert-info alert-dismissible">
+                         <br>
+                         <h4>Expertos en consenso = {{expertos}}</h4>
+                    </div>
+                {% endif %}
+
+                <!--BOTONES ------------------------------------ -->
+
+                 <div class="form-group">
+                        <div class="col-md-offset-2 col-md-8">
+                            {% if expertos %}
+                                <a class="btn btn-success" href="{% url 'mactor:consenso_caa_daa' estudio.id numero_matriz 1 %}" title="Matriz MID consenso"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% else %}
+                                <a class="btn btn-success" href="{% url 'mactor:caa_daa' estudio.id numero_matriz %}" title="Matriz MID"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% endif %}
+                            <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                        </div>
+                 </div>
+
+                </div>
+                <!-- /.box-body -->
+
+                <!--INICIO MODAL AYUDA------------------------- -->
+
+                 <div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                  <h4 class="modal-title">Ayuda - Grafo de Convergencias {{ numero_matriz }}CAA</h4>
+                              </div>
+                              <div class="modal-body" style="text-align: justify">
+                                 <p>Mediante este grafo se representan las relaciones binarias de convergencia entre los
+                                elementos del conjunto de actores estudiado, donde los vertices o nodos representan a los
+                                actores y las aristas o arcos que los unen el valor de convergencia entre determinado par de
+                                actores, es decir el número de objetivos respecto a los cuales un par de actores tiene una
+                                actitud convergente, ya sea favorable o desfavorable.
+                                </p>
+                                  <p>
+                                      El grosor de los arcos indica el nivel de convergencia entre el par de actores, a mayor
+                                      convergencia mayor grosor.
+                                  </p>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+        {% endif %}
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Vis -->
+    <script src="{% static 'js/vis.js' %}"></script>
+{% endblock %}

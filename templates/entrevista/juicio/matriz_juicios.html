@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+    <style>
+        input { text-align: center; width: 60px; }
+        td { text-align: center }
+        .celda_gris { background-color: #5e5e5e; color: white;}
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    {% if usuario == 'COORDINADOR' %}
+         <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-11" style="margin-top: 10px">
+                        <div class="widget-head">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">
+                                    {% if ronda.estado %}
+                                        <a class="btn btn-sm btn-success" title="Ronda abierta"><i class="fa fa-check"></i></a>
+                                    {% else %}
+                                        <a class="btn btn-sm btn-danger" title="Ronda cerrada"><i class="fa fa-times"></i></a>
+                                    {% endif %}
+                                    Ronda #{{ ronda.numero_ronda }} ({{ cant_expertos }} expertos)
+                                </h3>
+                            </div>
+                        </div>
+                      <!-- Custom Tabs -->
+                      <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                          <li class="active"><a href="#tab_1" data-toggle="tab">Matriz de Juicios</a></li>
+                          <li><a href="#tab_2" data-toggle="tab">Lista de Juicios</a></li>
+                          <li><a href="#tab_3" data-toggle="tab">Coeficiente Alfa de Cronbach</a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="tab_1">
+                               <div class="row">
+                                    <div class="col-md-12">
+                                            <div class="widget-content">
+                                                <div class="padd">
+                                                    {% if matriz != 0 %}
+                                                      <table id="example2" class="table table-bordered table-hover">
+                                                        <thead>
+                                                        <tr>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for fila in matriz %}
+                                                                {% for celda in fila %}
+                                                                    <tr>
+                                                                        {% if celda.columna == 0 %}
+                                                                            <input class="celda_gris" type="text" title="{{celda.descripcion}}" value="{{celda.valor}}">
+                                                                        {% else %}
+                                                                            {% if celda.pk != '' %}
+                                                                                <input type="text" value="{{celda.valor}}" onclick="location.href='{% url 'entrevista:consultar_juicio' celda.pk 'matriz' %}'" title="{{celda.descripcion}}">
+                                                                            {% else %}
+                                                                                <input type="text" value="{{celda.valor}}" title="{{celda.descripcion}}">
+                                                                            {% endif %}
+                                                                        {% endif %}
+                                                                    </tr>
+                                                                {% endfor %}
+                                                                <br>
+                                                            {% endfor %}
+                                                       </tbody>
+                                                      </table>
+                                                {% else %}
+                                                    <h3>Ningún experto ha finalizado los juicios en esta ronda.</h3>
+                                                {% endif %}
+
+                                                </div>
+                                            </div>
+                                    </div>
+                               </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_2">
+                            <div class="row" style="text-align: justify">
+                                <div class="col-md-12">
+                                      <div class="box box-solid">
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                          <dl>
+                                            {% if juicios_ronda %}
+                                                {% for juicio in juicios_ronda %}
+                                                <dt>{{ juicio.texto_pregunta }}<br>
+                                                    [{{ juicio.idValorEscala.valor }} - {{ juicio.idValorEscala.nombre }}]
+                                                </dt>
+                                                <dd>
+                                                    {% if juicio.justificacion == '' %}
+                                                        No se ha registrado una descripción para este juicio.
+                                                    {% else %}
+                                                        {{ juicio.justificacion }}
+                                                    {% endif %}
+                                                </dd>
+                                                <br>
+                                                {% endfor %}
+                                            {% else %}
+                                                <h3>No se han realizado juicios en esta ronda</h3>
+                                            {% endif %}
+                                          </dl>
+                                        </div>
+                                        <!-- /.box-body -->
+                                      </div>
+                                      <!-- /.box -->
+                                    </div>
+                            </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_3">
+                               <div class="row">
+                                    <div class="col-md-12">
+                                            <div class="widget-content">
+                                                <div class="padd">
+                                                    {% if promedios %}
+                                                      <table id="tabla_promedios" class="table table-bordered table-hover">
+                                                        <thead>
+                                                        <tr>
+                                                          <th style="text-align: center">Pregunta</th>
+                                                          <th style="text-align: center">Promedio</th>
+                                                          <th style="text-align: center">Coeficiente condicional</th>
+                                                          <th style="text-align: center">Estado coeficiente</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for promedio in promedios %}
+                                                                <tr>
+                                                                    <td>{{promedio.columna}}</td>
+                                                                    <td>{{promedio.valor}}</td>
+                                                                    <td>{{promedio.descripcion}}</td>
+                                                                     {% if promedio.descripcion >= 0.9 %}
+                                                                        <td><a class="btn btn-sm btn-success" style="width: 60%">Excelente</a></td>
+                                                                     {% elif promedio.descripcion >= 0.8 %}
+                                                                        <td><a class="btn btn-sm btn-success" style="width: 60%">Bueno</a></td>
+                                                                     {% elif promedio.descripcion >= 0.7 %}
+                                                                        <td><a class="btn btn-sm btn-success" style="width: 60%">Aceptable</a></td>
+                                                                     {% elif promedio.descripcion >= 0.6 %}
+                                                                        <td><a class="btn btn-sm btn-danger" style="width: 60%">Cuestionable</a></td>
+                                                                     {% elif promedio.descripcion >= 0.5 %}
+                                                                        <td><a class="btn btn-sm btn-danger" style="width: 60%">Pobre</a></td>
+                                                                     {% elif promedio.descripcion < 0.5 %}
+                                                                        <td><a class="btn btn-sm btn-danger" style="width: 60%">Inaceptable</a></td>
+                                                                     {% endif %}
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </tfoot>
+                                                      </table>
+                                                    {% else %}
+                                                        <h3>Ningún experto ha finalizado los juicios en esta ronda.</h3>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                    </div>
+                               </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                      </div>
+                      <!-- nav-tabs-custom -->
+                    </div>
+
+                    <!--BOTONES ----------------------------------- -->
+
+                     <div class="form-group">
+                         <div class="col-md-offset-2 col-md-8">
+                             <a class="btn btn-success" href="{% url 'entrevista:rondas' estudio.id %}" title="Rondas"><i class="fa fa-arrow-left"></i> Atrás</a>
+                             <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                         </div>
+                     </div>
+
+                     <!--INICIO MODAL AYUDA------------------------- -->
+
+                     <div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                      <h4 class="modal-title">Ayuda - Matriz de juicios</h4>
+                                  </div>
+                                  <div class="modal-body" style="text-align: justify">
+                                      <p>
+                                          La matriz de juicios representa el conjunto de valoraciones realizadas por los expertos,
+                                          permite evidenciar de forma rápida la variación de los resultados para cada item evaluado.
+                                          Por otro lado, muestra las sumatorias en fila (valoraciones del experto) y columnas
+                                          (valoraciones por pregunta); asi como el promedio y desviación estandar que sustentan
+                                          el coeficiente Alfa de Cronbach obtenido, el cual puede ser consultado en la  tercera pestaña.
+                                      </p>
+                                      <p>
+                                          De acuerdo a Oviedo y Campo-Arias(2005), el valor mínimo aceptable para el Coeficiente
+                                          Alfa de Cronbach es 0,70. Usualmente, se prefieren valores entre 0,80 y 0,90. Para la evaluación
+                                          del coeficiente hacen las siguientes recomendaciones:
+                                          <br>
+                                          <br>
+                                          <i class="fa fa-check"></i> Coeficiente alfa > 0.9 es excelente.
+                                          <br>
+                                          <i class="fa fa-check"></i> Coeficiente alfa > 0.8 es bueno.
+                                          <br>
+                                          <i class="fa fa-check"></i> Coeficiente alfa > 0.7 es aceptable.
+                                          <br>
+                                          <i class="fa fa-times"></i>  Coeficiente alfa > 0.6 es cuestionable.
+                                          <br>
+                                          <i class="fa fa-times"></i> Coeficiente alfa > 0.5 es pobre.
+                                          <br>
+                                          <i class="fa fa-times"></i> Coeficiente alfa < 0.5 es inaceptable.
+                                          <br>
+                                      </p>
+                              <p>El alfa de Cronbach puede arrojar un valor negativo, esto puede ser ocasionado por
+                                  inconsistencias en la escala utilizada. Se recomienda eliminar o editar las preguntas
+                                  con mayor desacuerdo y revisar los puntajes de las alternativas de respuesta
+                                  de la escala, para aumentar la confiabilidad del cuestionario. </p>
+                              <p>Oviedo, H. C., & Arias, A. C. (2005). Aproximación al uso del coeficiente alfa de Cronbach. Revista colombiana de psiquiatría, 34(4), 572-580.</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+     <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_promedios').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 50, -1], [5, 10, 50, "All"]]
+        })
+      })
+    </script>
+    <script>
+        $('input').attr('readonly', true);
+    </script>
+{% endblock %}

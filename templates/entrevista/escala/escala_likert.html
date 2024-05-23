@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+
+    <style>
+        #tabla_escala th, td {text-align: center}
+    </style>
+{% endblock%}
+
+{% block content %}
+
+    {% include 'messages.html' %}
+
+    {% if usuario != '' and usuario != 'EXPERTO' %}
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Escala de Likert</h3>
+
+                {% include 'entrevista/estudio/select_datos_estudio.html' %}
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                {% if valoresLikert %}
+
+              <table id="tabla_escala" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Respuesta</th>
+                  <th>Valor</th>
+                  <th>Estado</th>
+                  <th>Descripción</th>
+                  <th id="acciones">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for valor in valoresLikert %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{valor.nombre}}</td>
+                            <td>{{valor.valor}}</td>
+                            <td>
+                                {% if valor.estado %}
+                                    {% if estudio.estado and rondas_activa == 0 %}
+                                        <a id="escala{{valor.id}}" class="btn btn-sm btn-success" title="En uso"><i class="fa fa-check"></i></a>
+                                    {% else %}
+                                        <a class="btn btn-sm btn-success" title="En uso"><i class="fa fa-check"></i></a>
+                                    {% endif %}
+                                {% else %}
+                                    {% if estudio.estado and rondas_activa == 0 %}
+                                        <a id="escala{{valor.id}}" class="btn btn-sm btn-danger" title="Sin usar"><i class="fa fa-times"></i></a>
+                                    {% else %}
+                                        <a class="btn btn-sm btn-danger" title="Sin usar"><i class="fa fa-times"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: justify ; width: 45%">{{valor.descripcion|truncatechars:100}}</td>
+                            <td style="width: 15%">
+                                <a class="btn btn-primary" title="Ver" href="{% url 'entrevista:consultar_valor' valor.id %}"><i class="fa fa-eye"></i></a>
+                                {% if usuario == 'COORDINADOR' %}
+                                    {% if estudio.estado %}
+                                        {% if ronda_activa == 0 %}
+                                            <a class="btn btn-warning .edit" title="Editar" href="{% url 'entrevista:editar_valor' valor.id %}"><i class="fa fa-pencil"></i></a>
+                                        {% elif ronda_activa > 0 %}
+                                            <a class="btn btn-warning .edit" disabled="True" title="Existe una ronda en desarrollo."><i class="fa fa-pencil"></i></a>
+                                        {% endif %}
+
+                                        <!--Solo se pueden eliminar alternativas de respuesta si no se han registrado juicios y si no existe una ronda en desarrollo -->
+                                        {% if juicios > 0 %}
+                                            <a class="btn btn-danger delete" disabled="True" title="Se han realizado juicios en el estudio."><i class="fa fa-trash"></i></a>
+                                        {% elif ronda_activa > 0 %}
+                                            <a class="btn btn-danger delete" disabled="True" title="Existe una ronda en desarrollo."><i class="fa fa-trash"></i></a>
+                                        {% else %}
+                                            <a class="btn btn-danger delete" title="Eliminar" href="{% url 'entrevista:eliminar_valor' valor.id %}"><i class="fa fa-trash"></i></a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="btn btn-warning .edit" disabled="True" title="El estudio ha finalizado o está deshabilitado."><i class="fa fa-pencil"></i></a>
+                                        <a class="btn btn-danger delete" disabled="True" title="El estudio ha finalizado o está deshabilitado."><i class="fa fa-trash"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <h3>No existen alternativas de respuesta registradas en la escala.</h3>
+                {% endif %}
+               </tbody>
+              </table>
+
+                <br>
+
+            <!--BOTONES ------------------------------------------------- -->
+
+             <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        {% if usuario == 'COORDINADOR' %}
+                            {% if estudio.estado %}
+                                {% if ronda_activa == 0 %}
+                                    <a class="btn btn-primary"  href="{% url 'entrevista:nuevo_valor' estudio.id %}" title="Agregar alternativa de respuesta"><i class="fa fa-plus"></i> Agregar</a>
+                                {% elif ronda_activa > 0 %}
+                                     <a class="btn btn-primary" disabled="True" title="Existe una ronda en desarrollo."><i class="fa fa-plus"></i> Agregar</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="btn btn-primary" disabled="True" title="El estudio se encuentra cerrado."><i class="fa fa-plus"></i> Agregar</a>
+                            {% endif %}
+                        {% endif %}
+                        <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                    </div>
+             </div>
+
+            <!--INICIO MODAL AYUDA------------------------- -->
+
+		<div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Escala de Likert</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>La escala de Likert es una escala psicométrica comúnmente utilizada en cuestionarios.
+                                  Permite especificar el nivel de acuerdo o desacuerdo con una declaración. Resulta
+                                  especialmente útil emplearla en situaciones en las que se necesita matizar las opiniones
+                                  de los individuos. En este sentido, las categorías de respuesta sirven para capturar la
+                                  intensidad de los sentimientos hacia las afirmaciones evaluadas.
+                                  <br>
+                                  <br>
+                                  (Llauradó, 2014). La escala de Likert: qué es y cómo utilizarla.
+							  </p>
+                              <p>Nota: Tenga en cuenta que las opciones agregar, editar y eliminar se visualizarán deshabilitadas
+                                  una vez exista una ronda abierta. Además las opciones de respuesta solo podrán ser eliminadas
+                                  si no se han realizado juicios, de igual forma una vez se realicen juicios solo podrá editar
+                                  el estado de las opciones de respuesta, esto para conservar el historial de los resultados.</p>
+
+                              <p>Si luego de realizada una ronda de juicios desea que en la siguiente ciertas opciones no sean
+                              empleadas en los juicios, proceda a cambiar el estado de estas, mediante la edición de las alternativas.</p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_escala').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 50, -1], [5, 10, 50, "All"]]
+        })
+      })
+    </script>
+    <script src="{% static 'js/entrevista/cambiarEstadoPregunta_Escala_Ronda.js' %}"></script>
+{% endblock %}

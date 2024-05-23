@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+{% endblock%}
+
+{% block content %}
+
+    {% include 'messages.html' %}
+
+    {% if usuario != '' %}
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Juicios</h3>
+
+                {% include 'entrevista/estudio/select_datos_estudio.html' %}
+
+                {% if usuario != 'COORDINADOR' and ronda_activa %}
+                    <h4>Ronda #{{ronda_activa.numero_ronda}} ({{ porcentaje }}% diligenciado) activa hasta el {{ronda_activa.fecha_final}}.</h4>
+                {% elif ronda_activa %}
+                    <h4>Ronda #{{ronda_activa.numero_ronda}} activa hasta el {{ronda_activa.fecha_final}}.</h4>
+                {% endif %}
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+            {% if juicios %}
+
+              <table id="lista_juicios" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th style="text-align: center">#</th>
+                  <th style="text-align: center">Pregunta</th>
+                  <th style="text-align: center">Valor</th>
+                  <th style="text-align: center">Justificación</th>
+                  <th style="text-align: center; width: 10%">Ronda</th>
+                  <th style="text-align: center; width: 10%">Estado ronda</th>
+                  <th id="acciones" style="text-align: center">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for juicio in juicios %}
+                        <tr>
+                            <td style="text-align: center">{{forloop.counter}}</td>
+                            <td style="text-align: justify">{{juicio.texto_pregunta}}</td>
+                            <td style="text-align: center">{{juicio.idValorEscala}}</td>
+                            <td style="text-align: justify">{{juicio.justificacion|truncatechars:100}}</td>
+                            <td style="text-align: center">{{juicio.idRonda.numero_ronda}}</td>
+                            <td style="text-align: center">
+                                {% if juicio.idRonda.estado %}
+                                    <a class="btn btn-sm btn-success" title="Ronda abierta"><i class="fa fa-check"></i></a>
+                                {% else %}
+                                    <a class="btn btn-sm btn-danger" title="Ronda cerrada"><i class="fa fa-times"></i></a>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center">
+                                <a class="btn btn-primary" title="Ver" href="{% url 'entrevista:consultar_juicio' juicio.id 'lista' %}"><i class="fa fa-eye"></i></a>
+                                {% if estudio.estado %}
+                                    {% if usuario == 'EXPERTO' %}
+                                        {% if juicio.idRonda.estado %}
+                                            <a class="btn btn-warning .edit" title="Editar" href="{% url 'entrevista:editar_juicio' juicio.id %}"><i class="fa fa-pencil"></i></a>
+                                        {% elif juicio.idRonda.estado is False %}
+                                            <a class="btn btn-warning .edit" disabled="True" title="La ronda ha finalizado."><i class="fa fa-pencil"></i></a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <a class="btn btn-warning .edit" disabled="True" title="El estudio se encuentra cerrado."><i class="fa fa-pencil"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+               </tbody>
+              </table>
+            {% else %}
+                <h3>No se han registrado juicios.</h3>
+            {% endif %}
+
+            <!--BOTONES ------------------------------------------------- -->
+
+             <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        {% if usuario == 'EXPERTO' %}
+                            {% if estudio.estado %}
+                                {% if ronda_activa %}
+                                    {% if porcentaje < 100 %}
+                                        <a class="btn btn-primary" href="{% url 'entrevista:nuevo_juicio' estudio.id %}" title="Agregar juicio"><i class="fa fa-plus"></i> Agregar</a>
+                                    {% else %}
+                                        <a class="btn btn-primary" disabled="True" title="Ha completado todos los juicios."><i class="fa fa-plus"></i> Agregar</a>
+                                    {% endif %}
+                                {% else %}
+                                    <a class="btn btn-primary" disabled="True" title="No existe una ronda en desarrollo."><i class="fa fa-plus"></i> Agregar</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="btn btn-primary" disabled="True" title="El estudio se encuentra cerrado o deshabilitado."><i class="fa fa-plus"></i> Agregar</a>
+                            {% endif %}
+                        {% endif %}
+                        <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                    </div>
+             </div>
+
+              <!--INICIO MODAL AYUDA------------------------- -->
+
+		<div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Juicio de expertos</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>El juicio de expertos es una técnica utilizada para recolectar opiniones que brindan
+                                  individuos expertos en una disciplina relacionada al proyecto que se está ejecutando.
+                                  Es un método de validación útil para verificar la fiabilidad de una investigación que
+                                  se define como “una opinión informada de personas con trayectoria en el tema, que son
+                                  reconocidas por otros como expertos cualificados en éste, y que pueden dar información,
+                                  evidencia, juicios y valoraciones” (Escobar-Pérez y Cuervo-Martínez, 2008:29).
+                                  <br>
+                                  <br>
+                                  El objetivo de esta lista en el desarrollo del estudio, es emplear las opiniones recolectadas
+                                  para depurar y mejorar el cuestionario de entrevista.
+							  </p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#lista_juicios').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 50, -1], [5, 10, 50, "All"]]
+        })
+      })
+    </script>
+{% endblock %}

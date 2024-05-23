@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{% static 'css/select2/css/select2.min.css' %}">
+    <!-- DataPicker -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}">
+
+    <style>
+        #expertos li { color: black }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if request.user == proyecto.idAdministrador and proyecto.estado %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Nuevo estudio Entrevista</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+
+                                    {% include 'messages.html' %}
+
+										<!-- Form starts.  -->
+                                    <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                       <div class="row hidden">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <label class="control-label" style="text-align: left">Tecnica</label>
+                                                <input class="form-control" type="text" value="{{tecnica}}" name="tipoTecnica">
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{ form.titulo|as_crispy_field }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{ form.objetivo|as_crispy_field }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.entrevistador|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.entrevistado|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div  class="row">
+                                            <div class="col-md-3 col-md-offset-1" hidden>
+                                                <label class="control-label" style="text-align: left">Administrador</label>
+                                                <input class="form-control" type="text" value="{{proyecto.idAdministrador_id}}" name="idAdministrador">
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Coordinador*</label>
+                                                    <select name="idCoordinador" class="form-control select2" required id="id_idCoordinador">
+                                                        <option value="" selected>----Seleccionar----</option>
+                                                        {% for coo in proyecto.idCoordinadores.all %}
+                                                            <option value="{{coo.id}}">{{coo}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" id="expertos">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.idExpertos|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.fecha_inicio|as_crispy_field}}
+                                            </div>
+
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <span style="color: red">Nota: Tenga en cuenta que la fecha final no puede ser posterior a la fecha de cierre del proyecto ({{ proyecto.fecha_final }}). </span>
+                                                <br>
+                                                {{form.fecha_final|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                           <div class="col-md-8 col-md-offset-1">
+                                               <span style="color: red">Nota: Al cumplirse la fecha de cierre del estudio, el estado de este cambiará automáticamente a cerrado. </span>
+                                               <br>
+                                               {{ form.estado|as_crispy_field }}
+                                            </div>
+
+                                            <div class="col-md-8 col-md-offset-1 hidden">
+                                                <label class="control-label" style="text-align: left">Proyecto</label>
+                                                <input class="form-control" type="text" value="{{proyecto.id}}" name="idProyecto">
+                                            </div>
+                                        </div>
+
+                                        <br>
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'proyecto:ver_estudios_proyecto' proyecto.id %}" title="Estudios del proyecto"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                                <a class="btn btn-primary" href="{% url 'usuario:registrar_usuario_estudio' proyecto.id 2 0 %}" title="Registrar nuevo usuario"><i class="fa fa-plus"></i> Usuario</a>
+                                                <a class="btn btn-primary" data-toggle="modal" href="#myModal" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                                                <button type="submit" class="btn btn-primary" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+
+        <!--INICIO MODAL AYUDA------------------------- -->
+
+		<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Nuevo estudio MACTOR</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>Ingrese la información básica del estudio, tenga en cuenta los roles que pueden ser ejercidos
+                                  dentro del mismo:
+								  <br>
+								  <br>
+								  <i class="fa fa-user"></i> Administrador: encargado de crear y finalizar el estudio. También
+                                  puede llevar a cabo las tareas del coordinador.
+								  <br>
+								  <br>
+								  <i class="fa fa-user"></i> Coordinador: responsable de registrar las entradas necesarias
+                                  para el desarrollo del estudio (actores, estrategias y objetivos) y redactar el informe final
+                                  de acuerdo al consenso entre los expertos.
+								  <br>
+								  <br>
+								  <i class="fa fa-users"></i> Experto: encargado de diligenciar las matrices necesarias para
+                                el análisis de las convergencias y divergencias entre los actores respecto a los objetivos
+                                estudiados.
+								  <br>
+								  <br>
+								  <p style="color: black">Nota 1: El administrador puede ocupar dentro de un estudio los tres roles descritos, asi como
+                                el coordinador designado puede hacer parte del grupo de expertos.</p>
+                                <p style="color: black">Nota 2: Una vez finalizado el estudio el coordinador cuenta con la cantidad de dias registrados al
+                                    crear el estudio para redactar el informe, este informe puede ser modificado siempre que el estado del
+                                    mismo sea "Abierto". Usted como administrador cuenta con el permiso de redactar, modificar y cerrar el informe
+                                    si asi lo desea. </p>
+
+							  </p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Select2 -->
+    <script src="{% static 'js/select2/js/select2.full.min.js' %}"></script>
+    <!-- Datapicker -->
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'js/entrevista/controlFechas.js' %}"></script>
+
+     <script>
+        $(function ()
+        {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+        })
+    </script>
+{% endblock %}
+
+
+
+

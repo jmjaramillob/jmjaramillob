@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+
+    {% if usuario != '' %}
+        {% if expertos %}
+		    <input hidden class="col-sm-1" type="number" name="idEstudio" value="0{{estudio.id}}">
+        {% else %}
+            <input hidden class="col-sm-1" type="number" name="idEstudio" value="{{estudio.id}}">
+        {% endif %}
+
+        {% if expertos and usuario == 'EXPERTO' %}
+            <h2>No cuenta con permisos para acceder a esta página.</h2>
+        {% else %}
+            <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">Histograma de Coeficientes de Fuerza </h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <br>
+                <div style="width: 75%">
+                    <canvas id="canvas"></canvas>
+                </div>
+
+                    <script src="{% static 'js/jquery.min.js' %}"></script>
+
+               <script>
+                var idEstudio = $('input[name="idEstudio"]').val();
+                var lista_ri = [];
+                var lista_qi = [];
+                var lista_labels = [];
+                var lista_tools = [];
+
+                // se obtienen los datos a graficar
+                $.ajax(
+                            {
+                                data : {'estudio': idEstudio},
+                                url: 'datos_histograma_ri',
+                                type: 'get',
+                                success: function (data)
+                                {
+                                    var object = JSON.parse(data);
+
+                                    for(var i=0; i<object.labels.length; i++)
+                                    {
+                                        lista_labels.push(object.labels[i]);
+                                        lista_ri.push(object.valores_ri[i]);
+                                        lista_qi.push(object.valores_qi[i]);
+                                    }
+                                    generar()
+                                },
+                                 error: function()
+                                 {
+                                     console.log("Error no se puede graficar")
+                                 }
+                            });
+
+                // se asignan los valores a graficar
+                var barChartData = {
+                    labels: lista_labels,
+                    datasets:
+                        [{
+                        label: 'Ri',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        data: lista_ri
+                        },
+                        {
+                        label: 'Qi',
+                        backgroundColor: 'rgba(255,99,132,1)',
+                        data: lista_qi
+                        }]
+                };
+
+                // Funcion que genera la grafica
+                function generar () {
+                    var ctx = document.getElementById("canvas").getContext("2d");
+                    window.myBar = new Chart(ctx, {
+                        type: 'bar',
+                        data: barChartData,
+                        options: {
+                            title:{
+                                display:true,
+                                text:"Coeficientes de Fuerza de los actores"
+                            },
+                            tooltips: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            responsive: true,
+                            scales: {
+                                xAxes: [{
+                                    stacked: true
+                                }],
+                                yAxes: [{
+                                    stacked: true
+                                }]
+                            }
+                        }
+                    });
+                }
+
+                </script>
+
+                <br>
+                {% if expertos %}
+                    <div class="alert alert-info alert-dismissible">
+                         <br>
+                         <h4>Expertos en consenso = {{expertos}}</h4>
+                    </div>
+                {% endif %}
+
+                <!--BOTONES ------------------------------------ -->
+
+                 <div class="form-group">
+                        <div class="col-md-offset-2 col-md-8">
+                            {% if expertos %}
+                                <a class="btn btn-success" href="{% url 'mactor:consenso_mid' estudio.id 5 %}" title="Matriz Ri consenso"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% else %}
+                                <a class="btn btn-success" href="{% url 'mactor:matriz_ri' estudio.id %}" title="Matriz Ri"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% endif %}
+                            <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                        </div>
+                 </div>
+
+                </div>
+                <!-- /.box-body -->
+
+                <!--INICIO MODAL AYUDA------------------------- -->
+
+                 <div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                  <h4 class="modal-title">Ayuda - Coeficientes de Fuerza</h4>
+                              </div>
+                              <div class="modal-body" style="text-align: justify">
+                                  <p>El coeficiente Ri, representa las relaciones de fuerza existentes entre los
+                                    actores y permite diferenciar a los actores según su mayor o menor capacidad
+                                    para condicionar las actuaciones de los demás, al igual que su mayor o menor
+                                    dependencia respecto a ellos (Perestrelo y Castro, 2000).</p>
+                                <p>
+                                    Los actores con coeficiente ri mayor poseen una débil o nula dependencia respecto
+                                    a los otros actores y por lo tanto corresponden a los actores clave
+                                    del estudio, ya que ejercen mayor influencia por su poder o liderazgo.
+                                </p>
+                                <p>
+                                    El coeficiente Qi cumple la misma función que Ri solo que es calculado a partir de
+                                    la Matriz de Máxima Influencia Directa e Indirecta, mientras que para Ri se utiliza MIDI. El
+                                    objetivo de visualizar estos dos coeficientes en una misma interfaz es facilitar la comparación
+                                    de sus resultados.
+                                </p>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+        {% endif %}
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- ChartJS -->
+    <script src="{% static 'js/Chart.min.js' %}"></script>
+{% endblock %}

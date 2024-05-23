@@ -1,0 +1,34 @@
+<!-- select con destintarios dependiendo del tipo de estudio y el tipo de usuario que va a enviar el mensaje -->
+
+{% if estudio.tipoTecnica.codigo == 1 or estudio.tipoTecnica.codigo == 2  %}
+    <select class="form-control" id="tipos_destinatarios">
+        {% if request.user.id == estudio.idAdministrador.id %}
+            <option value="todos">Todos los participantes</option>
+            {% if request.user.id != estudio.idCoordinador.id %}
+                <option value="coordinadores">Coordinador del estudio</option>
+            {% endif %}
+            <option value="expertos">Expertos del estudio</option>
+        {% elif request.user.id == estudio.idCoordinador.id and estudio.idCoordinador.id != estudio.idAdministrador.id %}
+            <option value="admin">Administrador del estudio</option>
+            <option value="todos">Administrador y expertos del estudio</option>
+        {% elif usuario == 'EXPERTO' %}
+            <option value="admin">Administrador del estudio</option>
+            <option value="todos">Administrador y coordinador del estudio</option>
+        {% endif %}
+    </select>
+
+{% elif estudio.tipoTecnica.codigo == 3 %}
+    <select class="form-control" id="tipos_destinatarios">
+        {% if request.user.id == estudio.idAdministrador.id %}
+            <option value="todos">Todos los participantes del estudio</option>
+            <option value="coordinadores">Coordinadores del estudio</option>
+            <option value="expertos">Expertos del estudio</option>
+        {% elif request.user in estudio.idCoordinadores.all and request.user.id != estudio.idAdministrador.id %}
+            <option value="admin_coo">Administrador y coordinadores del estudio</option>
+            <option value="todos">Todos los participantes  del estudio</option>
+        {% elif usuario == 'EXPERTO' %}
+            <option value="admin">Administrador del estudio</option>
+            <option value="todos">Administrador y coordinadores del estudio</option>
+        {% endif %}
+    </select>
+{% endif %}

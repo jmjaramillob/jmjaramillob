@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+     <!-- Select2 -->
+    <link rel="stylesheet" href="{% static 'css/select2/css/select2.min.css' %}">
+    <!-- DataPicker -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}">
+
+    <style>
+        #coordinadores li { color: black }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if perms.proyecto.add_proyecto %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Nuevo Proyecto Prospectivo</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+
+                                    {% include 'messages.html' %}
+
+										<!-- Form starts.  -->
+                                    <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                       <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{ form.nombre|as_crispy_field }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{ form.objetivo|as_crispy_field }}
+                                            </div>
+                                        </div>
+
+                                         <div class="row">
+                                            <div class="col-md-3 col-md-offset-1" hidden>
+                                                <div class="form-group">
+                                                    <input class="form-control" type="text" value="{{user.id}}" name="idAdministrador">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" id="coordinadores">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.idCoordinadores|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row hidden">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.idExpertos|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.fecha_inicio|as_crispy_field}}
+                                            </div>
+
+                                            <div class="col-md-8 col-md-offset-1">
+                                                {{form.fecha_final|as_crispy_field}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                           <div class="col-md-8 col-md-offset-1">
+                                               <span style="color: red">Nota: Al cumplirse la fecha de cierre del proyecto, el estado de este cambiará automáticamente a cerrado. </span>
+                                               <br>
+                                               <label style="text-align: left"  class="control-label">Estado</label>
+                                               {{ form.estado }}
+                                            </div>
+                                        </div>
+
+                                        <br>
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'proyecto:proyectos_prospectivos' %}" title="Proyectos"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                                <a class="btn btn-primary" href="{% url 'usuario:registrar_usuario_proyecto' 0 %}" title="Registrar nuevo usuario"><i class="fa fa-plus"></i> Usuario</a>
+                                                <a class="btn btn-primary" data-toggle="modal" href="#myModal" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                                                <button type="submit" class="btn btn-primary" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+
+        <!--INICIO MODAL AYUDA------------------------- -->
+
+		<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Nuevo estudio proyecto prospectivo</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>Ingrese la información básica del proyecto, tenga en cuenta que:                                  dentro del mismo:
+								  <p><i class="fa fa-users"></i> Los coordinadores son las personas que puede colocar al frente
+                                  de la aplicación de determinada técnica prospectiva dentro del proyecto.
+                                  </p>
+								  <p><i class="fa fa-calendar"></i> El estado del proyecto cambiará automáticamente a cerrado una vez
+                                    se cumpla la fecha de cierre estipulada en la creción del mismo.
+                                  </p>
+                                  <p><i class="fa fa-envelope"></i>  Cada notificación realizada dentro del proyecto se eliminará
+                                    una vez cumpla el periodo establecido en el formulario de registro.
+                                  </p>
+							  </p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Select2 -->
+    <script src="{% static 'js/select2/js/select2.full.min.js' %}"></script>
+    <!-- Datapicker -->
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'js/entrevista/controlFechas.js' %}"></script>
+
+    <script>
+        $(function ()
+        {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+        })
+    </script>
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block extra_css %}
+	<!-- bootstrap datepicker -->
+	<link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/select2/css/select2.min.css' %}">
+{% endblock %}
+{% block title %}
+	Editar estudio
+{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<!-- left column -->
+		<div class="col-md-6">
+			<!-- general form elements -->
+			<div class="box-header with-border">
+				<h3 class="box-title">Formulario para editar estudios</h3>
+			</div>
+			<!-- /.box-header -->
+			<!-- form start -->
+
+			<!-- Form starts.  -->
+			<!-- form start -->
+			<div class="box-body center-block">
+				<!-- Form starts.  -->
+				{% if request.user == estudio.idProyecto.idAdministrador %}
+					{% if estudio.idProyecto.estado %}
+					<form class="" role="form" method="post">
+						<div class="form-group">
+							{% include 'messages.html' %}
+							{% csrf_token %}
+							<div class="col-md-8 col-md-offset-1 hidden">
+								{{ form.tipoTecnica|as_crispy_field }}
+							</div>
+							<p>
+								{{ form.titulo|as_crispy_field }}
+							</p>
+							<p>
+								{{ form.descripcion|as_crispy_field }}
+							</p>
+							<p>
+								{{ form.fecha_inicio|as_crispy_field }}
+							</p>
+							<p>
+								{{ form.fecha_final|as_crispy_field }}
+							</p>
+							<p>
+								<label>Coordinador</label>
+								<select name="idCoordinador" class="form-control" required
+										id="id_idCoordinador">
+									{% for coordinador in estudio.idProyecto.idCoordinadores.all %}
+										<option value="{{ coordinador.id }}">
+											{{ coordinador }}</option>
+									{% endfor %}
+								</select>
+							</p>
+							<p>
+								{{ form.idExpertos|as_crispy_field }}
+							</p>
+							<p>
+								<span style="color: red">
+									Nota: Al cumplirse la fecha de cierre del estudio, el estado
+									de este cambiará automáticamente a cerrado.
+								</span>
+								<br>
+								{{ form.estado|as_crispy_field }}
+							</p>
+						<p>
+								{{ form.dias_finalizacion_informe|as_crispy_field }}
+							</p>
+							<p>
+								<div class="col-md-8 col-md-offset-1 hidden">
+									{{form.idProyecto|as_crispy_field}}
+								</div>
+							</p>
+							<button type="submit" class="btn btn-success">
+								Guardar Cambios
+							</button>
+							<a
+								href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto_id %}">
+								<button type="button" class="btn btn-primary">Regresar
+								</button>
+							</a>
+						</div>
+					</form>
+					{% else %}
+						<p> Este proyecto no se encuentra activo </p>
+					{% endif %}
+				{% else %}
+					No estás agregado en Ningun Estudio
+
+					<a href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto_id %}">
+						<button type="button" class="btn btn-primary">Regresar
+						</button>
+					</a>
+				{% endif %}
+			</div>
+		</div>
+	</div><!-- Finaliza la sección del formulario -->
+
+{% endblock %}
+{% block extra_js %}
+	<!-- bootstrap datepicker -->
+	<script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+	<!-- Select2 -->
+	<script
+		src="{% static '/js/select2/js/select2.full.min.js' %}">
+	</script>
+	<script>
+		$(function () {
+			//Inicialización de select2
+			$('.select2').select2();
+			//Date picker
+			$('#id_fecha_inicio').datepicker({
+				autoclose: true,
+				sideBySide: true,
+          		format: 'dd/mm/yyyy',
+          		startDate: '{{ hoy|date:"d/m/Y"}}'
+			});
+			$('#id_fecha_final').datepicker({
+				autoclose: true,
+				sideBySide: true,
+          		format: 'dd/mm/yyyy',
+          		startDate: '{{ hoy|date:"d/m/Y"}}'
+			});
+		})
+
+
+	</script>
+{% endblock %}

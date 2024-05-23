@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+
+    <style>
+        #tabla_sesiones th, td {text-align: center}
+    </style>
+{% endblock%}
+
+{% block content %}
+
+    {% include 'messages.html' %}
+
+    {% if usuario != '' and usuario != 'EXPERTO' %}
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Sesiones</h3>
+
+                {% include 'abaco/estudio/select_datos_estudio.html' %}
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                {% if sesiones %}
+
+              <table id="tabla_sesiones" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Tipo</th>
+                  <th>Inicio</th>
+                  <th>Cierre</th>
+                  <th>Estado</th>
+                  <th id="acciones">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for sesion in sesiones %}
+                        <tr>
+                            <td style="width: 50px">{{sesion.numero_sesion}}</td>
+                            <td style="width: 200px">
+                                {% if sesion.tipo == 0 %}
+                                    Registro y edición de ideas
+                                {% elif sesion.tipo == 1 %}
+                                    Selección de ideas
+                                {% elif sesion.tipo == 2 %}
+                                    Evaluación de ideas
+                                {% endif %}
+                            </td>
+                            <td>{{sesion.fecha_inicio}}</td>
+                            <td>{{sesion.fecha_final}}</td>
+                            <td style="width: 50px">
+                                {% if sesion.estado %}
+                                    <a id="sesion{{ sesion.id }}" class="btn btn-sm btn-success" title="Sesión en curso"><i class="fa fa-check"></i></a>
+                                {% else %}
+                                    <a class="btn btn-sm btn-danger" title="Sesión finalizada"><i class="fa fa-times"></i></a>
+                                {% endif %}
+                            </td>
+                            <td style="width: 30%">
+                                <a class="btn btn-primary" title="Ver" href="{% url 'abaco:consultar_sesion' sesion.id %}"><i class="fa fa-eye"></i></a>
+                                {% if estudio.estado %}
+                                    {% if sesion.fecha_final >= hoy %}
+                                        <a class="btn btn-warning .edit" title="Editar" href="{% url 'abaco:editar_sesion' sesion.id %}"><i class="fa fa-pencil"></i></a>
+                                    {% else %}
+                                        <a class="btn btn-warning .edit" title="La sesión no se puede editar porque ha transcurrido su periodo de desarrollo." disabled="True"><i class="fa fa-pencil"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <h3>No se han registrado sesiones en el estudio.</h3>
+                {% endif %}
+               </tbody>
+              </table>
+
+            <!--BOTONES ------------------------------------------------- -->
+
+             <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        {% if estudio.estado %}
+                            {% if not ultima_sesion.estado %}
+                                <a class="btn btn-primary"  href="{% url 'abaco:nueva_sesion' estudio.id %}" title="Agregar sesión"><i class="fa fa-plus"></i> Agregar</a>
+                            {% else %}
+                                <a class="btn btn-primary" disabled="True" title="Existe una sesión en desarrollo."><i class="fa fa-plus"></i> Agregar</a>
+                            {% endif %}
+                        {% elif estudio.estado is False %}
+                            <a class="btn btn-primary" disabled="True" title="El estudio ha finalizado o está deshabilitado."><i class="fa fa-plus"></i> Agregar</a>
+                        {% endif %}
+                        <a class="btn btn-primary" data-toggle="modal" href="#modal_ayuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                    </div>
+             </div>
+
+            <!--INICIO MODAL AYUDA------------------------- -->
+
+		<div id="modal_ayuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                        <h4 class="modal-title">Ayuda - Sesiones</h4>
+                    </div>
+                    <div class="modal-body" style="text-align: justify">
+                        <p>
+                            -- PENDIENTE --
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_sesiones').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 50, -1], [5, 10, 50, "All"]]
+        })
+      })
+    </script>
+    <script src="{% static 'js/abaco/cambiar_estado_idea_regla_sesion.js' %}"></script>
+{% endblock %}
+

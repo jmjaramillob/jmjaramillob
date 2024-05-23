@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+
+    <style>
+        #tabla_actores th, td {text-align: center}
+    </style>
+{% endblock%}
+
+{% block content %}
+    {% if usuario != '' and usuario != 'EXPERTO' %}
+
+        {% include 'messages.html' %}
+
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Actores: ({{ actores.count }})</h3>
+
+              {% include 'mactor/estudio/select_datos_estudio.html' %}
+
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                {% if actores %}
+
+              <table id="tabla_actores" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nombre Largo</th>
+                  <th>Nombre Corto</th>
+                  <th>Descripción</th>
+                  <th id="acciones">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for actor in actores %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{actor.nombreLargo}}</td>
+                            <td style="width: 15%">{{actor.nombreCorto}}</td>
+                            <td>{{actor.descripcion|truncatechars:100}}</td>
+                            <td style="width: 15%">
+                                <a  id="{{actor.id}}" class="btn btn-primary" href="#modal_ConsultarActor" title="Ver" data-toggle="modal"><i class="fa fa-eye"></i></a>
+                                {% if estudio.estado %}
+                                    <a class="btn btn-warning .edit" href="{% url 'mactor:editar_actor' actor.id %}" title="Editar"><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-danger delete" href="{% url 'mactor:eliminar_actor' actor.id %}" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                {% else %}
+                                    <a class="btn btn-warning .edit" disabled="True" title="El estudio se encuentra cerrado."><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-danger delete" disabled="True" title="El estudio se encuentra cerrado."><i class="fa fa-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <h3>No existen actores registrados.</h3>
+                {% endif %}
+                </tfoot>
+              </table>
+
+            <!--BOTONES ------------------------------- -->
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        <a class="btn btn-success" href="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto.id %}" title="Atrás"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% if estudio.estado %}
+                                {% if actores.count < 15 %}
+                                    <a class="btn btn-primary" href="{% url 'mactor:nuevo_actor' estudio.id %}" title="Agregar actor"><i class="fa fa-plus"></i> Agregar</a>
+                                {% else %}
+                                    <a class="btn btn-primary" disabled="True" title="Ha alcanzado la cantidad máxima de actores permitida (15)."><i class="fa fa-plus"></i> Agregar</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="btn btn-primary" disabled="True" title="El estudio se encuentra cerrado."><i class="fa fa-plus"></i> Agregar</a>
+                            {% endif %}
+                        <a class="btn btn-primary" data-toggle="modal" href="#modalAyuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                    </div>
+                </div>
+
+             <!--MODAL AYUDA------------------------- -->
+
+		    <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Actores</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>De acuerdo a Cely (1999) los actores son “personas que pueden influir
+								  significativamente sobre el sistema mediante la toma de decisiones o la
+								  realización de proyectos” (p.27). De igual forma afirma que estos actores
+								  pueden pertenecer a grupos asociados a: el poder (organismos del estado),
+								  producción (sector industrial), saber (entidades que generan conocimiento,
+								  universidades, etc.) o la comunidad (beneficiarios de productos o servicios).
+							  </p>
+							  <p>La lista de actores de MACTOR generalmente es establecida a partir de la
+								  determinación de variables claves, aplicandose para ello técnicas como
+								  Lluvia de ideas y MICMAC. Por ello se recomienda tener en cuenta a aquellos
+								  actores que interactuen con dichas variables. Tenga en cuenta
+							      que en la presente aplicación puede registrar máximo 15 actores.
+							  </p>
+                              <p>Nota: En SoftProsp puede registrar hasta 15 actores.</p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+            <!--MODAL CONSULTAR ACTOR--------------- -->
+
+            {% include 'mactor/actor/modal_detalle_actor.html' %}
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_actores').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 15], [5, 10, 15]]
+        })
+      })
+    </script>
+    <script src="{% static 'js/mactor/consultar_actor.js' %}"></script>
+{% endblock %}

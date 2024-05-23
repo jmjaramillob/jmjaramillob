@@ -1,0 +1,18 @@
+<!--Opciones que dan acceso a los diferentes datos del estudio mactor-->
+
+<select style="float: right" onchange="location = this.value;">
+    <option value="">Opciones</option>
+    <option value="{% url 'proyecto:ver_estudios_proyecto' estudio.idProyecto_id %}">Estudios del proyecto</option>
+    <option value="{% url 'proyecto:ver_proyecto' estudio.idProyecto_id %}">Detalle del proyecto</option>
+    <option value="{% url 'entrevista:consultar_estudio' estudio.id %}">Detalle del estudio</option>
+    {% if usuario == 'COORDINADOR' %}
+        <option value="{% url 'entrevista:preguntas' estudio.id %}">Cuestionario</option>
+        <option value="{% url 'entrevista:escala' estudio.id %}">Escala de Likert</option>
+    {% endif %}
+    <option value="{% url 'entrevista:rondas' estudio.id %}">Rondas de juicio</option>
+    <option value="{% url 'entrevista:juicios' estudio.id %}">Juicios</option>
+    {% if usuario == 'COORDINADOR' %}
+        <option value="{% url 'entrevista:historial_coeficientes' estudio.id %}">Coeficientes Alpha</option>
+    {% endif %}
+    <option value="{% url 'entrevista:exportar_excel' estudio.id %}">Descargar datos</option>
+</select>

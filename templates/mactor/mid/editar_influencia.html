@@ -1,0 +1,392 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {% if mid.idActorY.idEstudio.estado and user == mid.idExperto %}
+            <div class="matter">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-11" style="margin-top: 10px">
+                      <!-- Custom Tabs -->
+                      <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                          <li class="active"><a href="#tab_1" data-toggle="tab">Editar Influencia</a></li>
+                          <li><a href="#tab_2" data-toggle="tab">Descripción de los actores</a></li>
+                          <li><a href="#tab_3" data-toggle="tab">Fichas de estrategias</a></li>
+                          <li><a href="#tab_4" data-toggle="tab">Influencias registradas</a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="tab_1">
+                            <div class="col-md-12">
+                                        <div class="widget-content" style="margin-top: 10px">
+                                            <div class="padd">
+                                                    <!-- Form starts.  -->
+
+                                                {% if mid %}
+                                                    <form id="form_mid" class="form-horizontal" role="form" method="post">
+                                                        {% csrf_token %}
+
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    {{form.idActorY.errors}}
+                                                                    <label class="control-label" style="text-align: left">Influencia del actor*</label>
+                                                                    <select name="idActorY" class="form-control" required id="id_idActorY">
+                                                                        <option value="{{mid.idActorY.id}}" selected>{{mid.idActorY.nombreLargo}}</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    {{form.idActorX.errors}}
+                                                                    <label class="control-label" style="text-align: left">Sobre el actor*</label>
+                                                                    <select name="idActorX" class="form-control" required id="id_idActorX">
+                                                                        <option value="{{mid.idActorX.id}}" selected>{{mid.idActorX.nombreLargo|upper}}</option>
+                                                                        {% for inf in influencias_y %}
+                                                                            {% if inf.idActorX_id != mid.idActorX.id %}
+                                                                                <option disabled>[{{inf.valor}}] - {{inf.idActorX.nombreLargo|upper}} </option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-2 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    {{form.valor|as_crispy_field }}
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-md-offset-1">
+                                                                <div class="form-group">
+                                                                    <label class="control-label" style="text-align: left">Justificación*</label>
+                                                                    {{form.justificacion}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-md-3 col-md-offset-1" hidden>
+                                                                <div class="form-group">
+                                                                    <label class="control-label" style="text-align: left">Experto</label>
+                                                                    {{form.idExperto}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                         <div class="form-group">
+                                                            <div class="col-md-8 col-md-offset-3">
+                                                                {% if tipoAcceso == 'lista' %}
+                                                                    <a class="btn btn-success" href="{% url 'mactor:influenciasMID' mid.idActorY.idEstudio.id %}" title="Influencias directas"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                                                {% else %}
+                                                                    <a class="btn btn-success" href="{% url 'mactor:matriz_mid' mid.idActorY.idEstudio.id %}" title="Matriz de Influencias Directas"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                                                {% endif %}
+                                                                <a class="btn btn-primary" data-toggle="modal" href="#modalAyuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                                                                <button type="submit" class="btn btn-primary" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+                                                            </div>
+                                                        </div>
+
+                                                    </form>
+                                                {% else %}
+                                                    <h3>No se han registrado actores en el estudio.</h3>
+                                                {% endif %}
+
+                                            </div>
+                                        </div>
+                                </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_2">
+                            <div class="row" style="text-align: justify">
+                                <div class="col-md-12">
+                                      <div class="box box-solid">
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                          <dl>
+                                            <dt>[{{ mid.idActorY.nombreCorto }}] - {{ mid.idActorY.nombreLargo }} </dt>
+                                            <dd>
+                                                {% if mid.idActorY.descripcion == '' %}
+                                                    No se ha registrado una descripción para este actor.
+                                                {% else %}
+                                                    {{ mid.idActorY.descripcion }}
+                                                {% endif %}
+                                            </dd>
+                                            <br>
+                                            <dt>[{{ mid.idActorX.nombreCorto }}] - {{ mid.idActorX.nombreLargo }} </dt>
+                                            <dd>
+                                                {% if mid.idActorX.descripcion == '' %}
+                                                    No se ha registrado una descripción para este actor.
+                                                {% else %}
+                                                    {{ mid.idActorX.descripcion }}
+                                                {% endif %}
+                                            </dd>
+                                          </dl>
+                                        </div>
+                                        <!-- /.box-body -->
+                                      </div>
+                                      <!-- /.box -->
+                                    </div>
+                            </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_3">
+                            <div class="row" style="text-align: justify">
+                                <div class="col-md-12">
+                                      <div class="box box-solid">
+                                        <div class="box-header with-border">
+                                          <i class="fa fa-list"></i>
+                                          <h3 class="box-title">Estrategias y Medios de acción de los actores</h3>
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                          <dl>
+                                            {% if fichas %}
+                                                {%  for ficha in fichas %}
+                                                <dt>{{ ficha.idActorY.nombreLargo }} - {{ ficha.idActorX.nombreLargo }}</dt>
+                                                <dd>{{ ficha.estrategia }}</dd>
+                                                <br>
+                                                <br>
+                                                {% endfor %}
+                                            {% else %}
+                                                No se han registrado fichas de estrategias.
+                                            {% endif %}
+                                          </dl>
+                                        </div>
+                                        <!-- /.box-body -->
+                                      </div>
+                                      <!-- /.box -->
+                                    </div>
+                            </div>
+                          </div>
+                            <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_4">
+                            <div class="row" style="text-align: justify">
+                                <div class="col-md-12">
+                                      <div class="box box-solid">
+                                        <div class="box-header with-border">
+                                          <i class="fa fa-list"></i>
+                                          <h3 class="box-title">Influencias registradas del actor {{mid.idActorY.nombreLargo}}</h3>
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                          <dl>
+                                          {% for inf in influencias_y %}
+                                            <dt>{{ inf.idActorX.nombreCorto }} - {{ inf.idActorX.nombreLargo }}
+                                                <br>
+                                                [{{ inf.valor }} -
+                                                {% if inf.valor == 0 %}
+                                                     Sin influencia
+                                                {% elif inf.valor == 1 %}
+                                                     Procesos
+                                                {% elif inf.valor == 2 %}
+                                                    Proyectos
+                                                {% elif inf.valor == 3 %}
+                                                    Misión
+                                                {% else %}
+                                                    Existencia
+                                                {% endif %}
+                                                ]
+                                            </dt>
+                                            <dd>
+                                                {{ inf.justificacion }}
+                                            </dd>
+                                              <br>
+                                          {% endfor %}
+                                          </dl>
+                                        </div>
+                                        <!-- /.box-body -->
+                                      </div>
+                                      <!-- /.box -->
+                                    </div>
+                            </div>
+                          </div>
+                          <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                      </div>
+                      <!-- nav-tabs-custom -->
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+  <!--INICIO MODAL DESCRIPCION Y FICHA ACTORES----------------- -->
+    <div id="modalFicha" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 id="mod_title" class="modal-title">Ficha de estrategias</h4>
+                </div>
+                <div id="mod_body" class="modal-body">
+
+                    <table id="tabla_expertos" class="table table-bordered table-striped">
+                        <tbody>
+                                <tr>
+                                    <td valign="middle" align="justify" style="vertical-align: top; text-align: start">
+                                        <div class="col-md-12">
+                                            <div class="form-group" style="display: flex; align-items: center">
+                                                <label class="control-label">({{ actorY.nombreCorto }}) - {{ actorY.nombreLargo }}</label>
+                                                <textarea class="form-control">
+                                                    {% if actorY.descripcion == '' %}
+                                                        No se ha registrado una descripción para este actor.
+                                                    {% else %}
+                                                        {{ actorY.descripcion }}
+                                                    {% endif %}
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
+
+
+                        <div class="col-md-12">
+                            <div class="form-group" style="alignment: left">
+                                <label class="control-label">({{ actorY.nombreCorto }}) - {{ actorY.nombreLargo }}</label>
+                                <textarea class="form-control">
+                                    {% if actorY.descripcion == '' %}
+                                        No se ha registrado una descripción para este actor.
+                                    {% else %}
+                                        {{ actorY.descripcion }}
+                                    {% endif %}
+                                </textarea>
+                            </div>
+                        </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: left">
+                            <div class="form-group" style="vertical-align: top;text-align: left">
+                                <label class="control-label">({{ actorX.nombreCorto }}) - {{ actorX.nombreLargo }}</label>
+                                <textarea class="form-control">
+                                    {% if actorX.descripcion == '' %}
+                                        No se ha registrado una descripción para este actor.
+                                    {% else %}
+                                        {{ actorX.descripcion }}
+                                    {% endif %}
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12" style="text-align: left">
+                            <div class="form-group">
+                                <label class="control-label">Ficha de estrategias de los actores</label>
+                                <textarea class="form-control" rows="5" style="text-align: left">
+                                    {% if actorY.descripcion == '' %}
+                                        No se ha registrado una descripción para este actor.
+                                    {% else %}
+                                        {{ actorY.descripcion }}
+                                    {% endif %}
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <!--INICIO MODAL AYUDA------------------------- -->
+
+    <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Nueva ficha de estrategias</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>Registre las influencias directas entre los actores, a partir de la tabla de estrategias
+                                  elaborada anteriormente.
+                              </p>
+                              <p>
+                                  Se definen cinco niveles de relaciones entre los actores según el grado de influencia
+                                  así:
+                                  <br>
+                                  [0] Un actor tiene poca o ninguna influencia sobre otro, <br>
+                                  [1] Un actor puede poner en riesgo de forma limitada los procesos operativos de gestión de otro, <br>
+                                  [2] Un actor puede poner en riesgo el éxito de los proyectos de otro actor, <br>
+                                  [3] Un actor puede poner en riesgo el cumplimiento de las misiones de otro actor, y por último <br>
+                                  [4] Un actor puede poner en riesgo la existencia o permanencia de otro.
+                                  <br>
+                                  (Godet y Durance, 2009).
+                              </p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+{% endblock %}
+
+

@@ -1,0 +1,30 @@
+<!-- select con destintarios dependiendo del tipo de estudio y el tipo de usuario que va a enviar el mensaje -->
+
+{% if estudio.tipoTecnica.codigo == 1 or estudio.tipoTecnica.codigo == 2  %}
+        {% if mensaje.idEmisor.id == estudio.idAdministrador.id %}
+            Administrador
+        {% elif mensaje.idEmisor.id == estudio.idCoordinador.id and estudio.idCoordinador.id != estudio.idAdministrador.id %}
+            Coordinador
+        {% elif mensaje.idEmisor in estudio.idExpertos.all %}
+            Exp. {{mensaje.idEmisor}}
+        {% endif %}
+
+{% elif estudio.tipoTecnica.codigo == 3 %}
+    <select class="form-control" id="tipos_destinatarios">
+        {% if request.user.id == estudio.idAdministrador.id %}
+            <option value="todos">Todos los participantes del estudio</option>
+            {% if estudio.idCoordinadores.count == 1 and not request.user in estudio.idCoordinadores.all %}
+                <option value="coordinadores">Coordinadores del estudio</option>
+            {% elif estudio.idCoordinadores.count > 1 %}
+                <option value="coordinadores">Coordinadores del estudio</option>
+            {% endif %}
+            <option value="expertos">Expertos del estudio</option>
+        {% elif request.user in estudio.idCoordinadores.all and request.user.id != estudio.idAdministrador.id %}
+            <option value="todos">Todos los participantes  del estudio (incluyendo a los demas coordinadores)</option>
+            <option value="admin_coo">Administrador y coordinadores del estudio</option>
+        {% elif usuario == 'EXPERTO' %}
+            <option value="admin">Administrador del estudio</option>
+            <option value="todos">Administrador y coordinadores del estudio</option>
+        {% endif %}
+    </select>
+{% endif %}

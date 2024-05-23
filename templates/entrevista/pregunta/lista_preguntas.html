@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
+
+    <style>
+        #tabla_preguntas th, td {text-align: center}
+    </style>
+{% endblock%}
+
+{% block content %}
+    {% if usuario != '' and usuario != 'EXPERTO' %}
+
+        {% include 'messages.html' %}
+
+        <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Cuestionario</h3>
+
+                {% include 'entrevista/estudio/select_datos_estudio.html' %}
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                {% if preguntas %}
+
+              <table class="table table-bordered table-striped" id="tabla_preguntas">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Pregunta</th>
+                  <th>Estado</th>
+                  <th>Respuesta esperada</th>
+                  <th>Observaciones</th>
+                  <th id="acciones">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for pregunta in preguntas %}
+                        <tr>
+                            <td style="width: 5%">{{forloop.counter}}</td>
+                            <td style="text-align: justify">{{pregunta.texto_pregunta|truncatechars:100}}</td>
+                            <td>
+                                {% if pregunta.estado %}
+                                    {% if estudio.estado and rondas_activa == 0 %}
+                                        <a id="pregunta{{pregunta.id}}" class="btn btn-sm btn-success" title="En uso"><i class="fa fa-check"></i></a>
+                                    {% else %}
+                                        <a class="btn btn-sm btn-success" title="En uso"><i class="fa fa-check"></i></a>
+                                    {% endif %}
+                                {% else %}
+                                    {% if estudio.estado and rondas_activa == 0 %}
+                                        <a id="pregunta{{pregunta.id}}" class="btn btn-sm btn-danger" title="Sin usar"><i class="fa fa-times"></i></a>
+                                    {% else %}
+                                        <a class="btn btn-sm btn-danger" title="Sin usar"><i class="fa fa-times"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td style="text-align: justify">{{pregunta.texto_respuesta|truncatechars:100}}</td>
+                            <td style="text-align: justify">{{pregunta.observacion|truncatechars:100}}</td>
+                            <td style="width: 15%">
+                                <a class="btn btn-primary" href="{% url 'entrevista:consultar_pregunta' pregunta.id %}" title="Ver"><i class="fa fa-eye"></i></a>
+                                {% if usuario == 'COORDINADOR' %}
+                                    {% if estudio.estado %}
+                                        {% if rondas_activa == 0 %}
+                                            <a class="btn btn-warning .edit" href="{% url 'entrevista:editar_pregunta' pregunta.id %}" title="Editar"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger delete" href="{% url 'entrevista:eliminar_pregunta' pregunta.id %}" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                        {% elif rondas_activa > 0 %}
+                                            <a class="btn btn-warning .edit" disabled="True" title="Existe una ronda en desarrollo."><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger delete" disabled="True" title="Existe una ronda en desarrollo."><i class="fa fa-trash"></i></a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="btn btn-warning .edit" disabled="True" title="El estudio ha finalizado o está deshabilitado."><i class="fa fa-pencil"></i></a>
+                                        <a class="btn btn-danger delete" disabled="True" title="El estudio ha finalizado o está deshabilitado."><i class="fa fa-trash"></i></a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <h3>No existen preguntas registradas.</h3>
+                {% endif %}
+                </tfoot>
+              </table>
+
+            <!--BOTONES ------------------------------------------------- -->
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-8">
+                        {% if usuario == 'COORDINADOR' %}
+                            {% if estudio.estado %}
+                                {% if rondas_activa == 0 %}
+                                    <a class="btn btn-primary" href="{% url 'entrevista:nueva_pregunta' estudio.id %}" title="Agregar pregunta"><i class="fa fa-plus"></i> Agregar</a>
+                                {% elif rondas_activa > 0 %}
+                                    <a class="btn btn-primary" disabled="True" title="Existe una ronda en desarrollo."><i class="fa fa-plus"></i> Agregar</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="btn btn-primary" disabled="True" title="El estudio se encuentra cerrado."><i class="fa fa-plus"></i> Agregar</a>
+                            {% endif %}
+                        {% endif %}
+                        <a class="btn btn-primary" data-toggle="modal" href="#modalAyuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                    </div>
+                </div>
+
+             <!--MODAL AYUDA------------------------- -->
+
+		    <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Estudio Entrevista</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							  <p>
+                                  En la presente ventana se visualiza la lista de preguntas que el grupo de expertos seleccionado
+                                  evaluará. Para la elaboración del cuestionario tenga en cuenta las siguientes recomendaciones:
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-book"></i> Revise literatura de cuestionarios que midan las mismas variables que
+                                      se pretenden medir en la investigación.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-filter"></i> Evalue la validez y confiabilidad de los cuestionarios anteriores, de modo que pueden ser
+                                    tomados como bases para el desarrollo del cuestionario deseado.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-edit"></i> Elabore la primera versión del cuestionario.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-users"></i> Consulte a expertos o personas familiarizadas con el tema estudiado.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-pencil"></i> Desarrolle la primera versión del cuestionario.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-calendar"></i> Establezca el contexto en que se aplicará el cuestionario.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-eye"></i> Lleve a cabo pruebas piloto.
+                                  <br>
+                                  <br>
+                                  <i class="fa fa-list"></i> Desarrolle la versión final.
+                                  <br>
+                                  <br>
+                                  (Hernández, R., Fernández, C., y Baptista , P, 1998). Metodología de la investigación.
+							  </p>
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- DataTables -->
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script>
+      $(function () {
+        $('#tabla_preguntas').DataTable({
+          'paging'      : true,
+          'lengthChange': true,
+          'searching'   : true,
+          'ordering'    : false,
+          'info'        : true,
+          'autoWidth'   : true,
+          'aLengthMenu' : [[5, 10, 50, -1], [5, 10, 50, "All"]]
+        })
+      })
+    </script>
+    <script src="{% static 'js/entrevista/cambiarEstadoPregunta_Escala_Ronda.js' %}"></script>
+{% endblock %}

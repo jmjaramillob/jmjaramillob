@@ -1,0 +1,53 @@
+
+<!-- Modal de acceso a matrices de mid -->
+<div id="modalMatrices" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title">Matrices de Análisis de los actores</h4>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <a class="btn btn-primary botones_modal" href="{% url 'mactor:matriz_mid' estudio.id %}">MID - Matriz de Influencias Directas</a>
+                {% if porcentaje == 100 %}
+                    <a class="btn btn-primary botones_modal" href="{% url 'mactor:matriz_midi' estudio.id %}">MIDI - Matriz de Influencias Directas e Indirectas</a>
+                    <a class="btn btn-primary botones_modal" href="{% url 'mactor:matriz_maxima' estudio.id %}">MAX - Matriz de Máxima Influencia Directa e Indirecta</a>
+                    <a class="btn btn-primary botones_modal" href="{% url 'mactor:matriz_balance' estudio.id %}">BL - Matriz de Balance Líquido</a>
+                    <a class="btn btn-primary botones_modal" href="{% url 'mactor:matriz_ri' estudio.id %}">Ri-Qi - Coeficientes de Fuerza de los actores</a>
+                {% else %}
+                    <a class="btn btn-primary botones_modal" disabled="True" title="Finalice la matriz MID para acceder a MIDI">MIDI - Matriz de Influencias Directas e Indirectas</a>
+                    <a class="btn btn-primary botones_modal" disabled="True" title="Finalice la matriz MID para acceder a MAX">MAX - Matriz de Máxima Influencia Directa e Indirecta</a>
+                    <a class="btn btn-primary botones_modal" disabled="True" title="Finalice la matriz MID para acceder a BL">BL - Matriz de Balance Líquido</a>
+                    <a class="btn btn-primary botones_modal" disabled="True" title="Finalice la matriz MID para acceder a Ri - Qi">Ri-Qi - Coeficientes de Fuerza de los actores</a>
+                {% endif %}
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de acceso a matrices consenso de mid -->
+<div id="modalMatricesConsenso" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title">Consenso Matrices de Análisis de los actores</h4>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <a class="btn btn-success botones_modal" href="{% url 'mactor:consenso_mid' estudio.id 1 %}">MID - Matriz de Influencias Directas</a>
+                <a class="btn btn-success botones_modal" href="{% url 'mactor:consenso_mid' estudio.id 2 %}">MIDI - Matriz de Influencias Directas e Indirectas</a>
+                <a class="btn btn-success botones_modal" href="{% url 'mactor:consenso_mid' estudio.id 3 %}">MAX - Matriz de Máxima Influencia Directa e Indirecta</a>
+                <a class="btn btn-success botones_modal" href="{% url 'mactor:consenso_mid' estudio.id 4 %}">BL - Matriz de Balance Líquido</a>
+                <a class="btn btn-success botones_modal" href="{% url 'mactor:consenso_mid' estudio.id 5 %}">Ri-Qi - Coeficientes de Fuerza de los actores</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

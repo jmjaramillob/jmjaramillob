@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css %}
+    <style>
+        input { text-align: center; width: 60px; }
+        .celda_gris { background-color: #5e5e5e; color: white;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if usuario != '' %}
+        {% if consenso and usuario == 'EXPERTO' %}
+            <h2>No cuenta con permisos para acceder a esta página</h2>
+        {% else %}
+            <div class="box">
+            <div class="box-header">
+                {% include 'mactor/mao/matrices/titulos_matriz_mao.html' %}
+                <!--Para el modals que muestra el detalle del actor y del objetivo-->
+                <input hidden class="col-sm-1" type="number" name="idEstudio" value="{{estudio.id}}">
+                {% include 'mactor/mao/matrices/opciones_matriz_mao.html' %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    {% include 'messages.html' %}
+                </div>
+            </div>
+
+            <!-- /.box-header -->
+            <div class="box-body">
+                {% if tipo == 1 %}
+                    <h4>Los valores de la matriz 1MAO son determinados automáticamente de acuerdo a la matriz 2MAO.</h4>
+                {% elif tipo == 3 and estado_matriz == 0 %}
+                   <h4>Para visualizar la matriz 3MAO es necesario que las matrices MID y 2MAO se encuentren diligenciadas.</h4>
+                {% endif %}
+
+              {% include 'mactor/mao/matrices/table_matriz_mao.html' %}
+            <br>
+            {% if consenso %}
+                <div class="alert alert-info alert-dismissible">
+                         <br>
+                {% if expertos %}
+                         <h4>Expertos en consenso = {{expertos}}</h4>
+                {% else %}
+                         <h4>Expertos en consenso = 0/{{estudio.idExpertos.count}}</h4>
+                {% endif %}
+                </div>
+            {% endif %}
+            <br>
+
+            <!--BOTONES ------------------------------------------------- -->
+
+            {% include 'mactor/mao/matrices/botones_matrices.html' %}
+
+            <!--MODAL CONSULTAR ACTOR------------------------------------ -->
+
+            {% include 'mactor/actor/modal_detalle_actor.html' %}
+
+            <!--MODAL CONSULTAR OBJETIVO--------------------------------- -->
+
+            {% include 'mactor/objetivo/modal_detalle_objetivo.html' %}
+
+            <!--MODAL ESTADO DEL ESTUDIO--------------------------------- -->
+
+            {% include 'mactor/mid/matrices/modal_estado_estudio.html' %}
+
+             <!--MODAL AYUDA--------------------------------------------- -->
+
+		    <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					  <div class="modal-content">
+						  <div class="modal-header">
+							  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+							  <h4 class="modal-title">Ayuda - Matriz {{ tipo }}MAO</h4>
+						  </div>
+						  <div class="modal-body" style="text-align: justify">
+							 {% if tipo == 1 %}
+                                 <p>La matriz 1MAO describe la actitud actual de cada actor en relación a cada objetivo,
+                                     indicando su posición a favor (+1), en contra (-1) o neutra (0) hacia el alcance de
+                                     cada objetivo (Arcade, Godet, Meunier, & Roubelat, 2004).</p><br>
+
+                                 <p>De acuerdo a Castro y Perestrelo (2000):<br>
+                                     <i class="fa fa-check"></i> La suma en fila, indica el grado de implicación de cada
+                                     actor en los objetivos estudiados, es decir, el número de objetivos para los que cada
+                                     actor tiene una posición activa, concordante o discordante.<br>
+
+                                     <i class="fa fa-check"></i> La suma en columna indica el grado de movilización de los
+                                     objetivos, es decir, el número de actores que tienen una posición activa, de acuerdo
+                                     o desacuerdo, para cada objetivo.
+                                 </p>
+
+                                 <p>Nota: Los valores se esta matriz son determinados de acuerdo a los pertenecientes a la
+                                    Matriz Valorada de Posiciones (2MAO), siendo la única que el usuario debe diligenciar.
+                                 </p>
+                             {% elif tipo == 2 %}
+                                 <p>La matriz 2MAO describe la actitud actual de cada actor mediante una escala de
+                                        valores enteros que abarcan el rango -4 a 4, según si el grado de oposición o
+                                        acuerdo es muy alto, alto, medio o bajo, siendo los extremos del rango los niveles
+                                        mas altos de desacuerdo y acuerdo respectivamente y 0 una posición neutra (Arcade,
+                                        Godet, Meunier, & Roubelat, 2004).</p><br>
+
+                                    <p>De acuerdo a Castro y Perestrelo (2000):<br>
+                                        <i class="fa fa-check"></i> La suma en fila, indica el grado de implicación de cada actor en los objetivos
+                                        estudiados, es decir, el número de objetivos para los que cada actor tiene una
+                                        posición activa, concordante o discordante.<br>
+
+                                        <i class="fa fa-check"></i> La suma en columna indica el grado de movilización de los objetivos, es decir,
+                                        el número de actores que tienen una posición activa, de acuerdo o desacuerdo,
+                                        para cada objetivo.
+                                    </p>
+                             {% else %}
+                                 <p>
+                                     Al no depender las posibles alianzas y conflictos entre los actores solo de su
+                                     afinidad u oposición al desarrollo de los objetivos, sino también de la
+                                     capacidad de cada uno de estos para influir sobre el resto, se lleva a cabo el
+                                     cálculo de la matriz 3MAO, la cual se obtiene al multiplicar cada fila de la
+                                     matriz 2MAO por el Coeficiente Ri del actor correspondiente.<br><br>
+
+                                     Es decir mediante la matriz 3MAO, es posible analizar el nivel de convergencia y
+                                     divergencia de los actores, considerando además de la aptitud actual hacia los
+                                     objetivos el nivel de influencia entre los actores estudiados, evidenciándose
+                                     con ello con mayor claridad las alianzas y conflictos.
+                                    </p>
+
+                                 <p>De acuerdo a Castro y Perestrelo (2000):<br>
+                                        <i class="fa fa-check"></i> La suma en fila, indica el grado de implicación de cada actor en los objetivos
+                                        estudiados, es decir, el número de objetivos para los que cada actor tiene una
+                                        posición activa, concordante o discordante.<br>
+
+                                        <i class="fa fa-check"></i> La suma en columna indica el grado de movilización de los objetivos, es decir,
+                                        el número de actores que tienen una posición activa, de acuerdo o desacuerdo,
+                                        para cada objetivo.
+                                 </p>
+                             {% endif %}
+						  </div>
+						  <div class="modal-footer">
+							  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+        {% endif %}
+
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/mactor/consultar_actor_objetivo_matriz.js'%}"></script>
+    <script>
+        $('input').attr('readonly', true);
+    </script>
+{% endblock %}

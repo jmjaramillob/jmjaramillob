@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if usuario != '' %}
+        {% if consenso and usuario == 'EXPERTO' %}
+            <h2>No cuenta con permisos para acceder a esta página.</h2>
+        {% else %}
+            <div class="box">
+                <div class="box-header">
+                    {% if consenso %}
+                        <h3 class="box-title">CONSENSO - Indicador de Estabilidad de las Relaciones entre Actores</h3>
+                    {% else %}
+                        <h3 class="box-title">H - Indicador de Estabilidad de las Relaciones entre Actores</h3>
+                    {% endif %}
+                    <input hidden class="col-sm-1" type="number" name="idEstudio" value="{{estudio.id}}">
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body">
+
+                    <div class="alert alert-info alert-dismissible">
+                        <div class="row">
+                            <div class="col-md-7 col-md-offset-1">
+                                <div class="form-group">
+                                    <h2>H = {{indicador}}%</h2>
+                                </div>
+                            </div>
+                        </div>
+
+                    <br>
+                    {% if consenso is True %}
+                        <br>
+                        <h4>Expertos en consenso = {{expertos}}</h4>
+                    {% endif %}
+                    </div>
+                    <br>
+
+
+                <!--BOTONES ------------------------------ -->
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-8">
+                            {% if expertos and usuario == 'COORDINADOR_EXPERTO' %}
+                                <a class="btn btn-success" href="{% url 'mactor:consenso_mid' estudio.id 2 %}" title="Matriz MIDI consenso"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% else %}
+                                <a class="btn btn-success" href="{% url 'mactor:matriz_midi' estudio.id %}" title="Matriz MIDI"><i class="fa fa-arrow-left"></i> Atrás</a>
+                            {% endif %}
+                            <a class="btn btn-primary" data-toggle="modal" href="#modalAyuda" title="Ayuda"><i class="fa fa-book"></i> Ayuda</a>
+                        </div>
+                    </div>
+
+
+                 <!--MODAL AYUDA------------------------- -->
+
+                <div id="modalAyuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                  <h4 class="modal-title">Ayuda - Coeficiente de estabilidad H</h4>
+                              </div>
+                              <div class="modal-body" style="text-align: justify">
+                                <p>De acuerdo a Castro y Perestrelo (2000), la estabilidad de las relaciones entre
+                                    los actores se puede establecer inicialmente mediante el posicionamiento de
+                                    estos en el Mapa de Influencia / Dependencia asi:<br>
+                                  <i class="fa fa-check"></i> El juego de actores es estable si por un lado se tienen actores muy influyentes
+                                  y poco dependientes y por otro, actores muy dependientes y poco influyentes.<br>
+                                  <i class="fa fa-check"></i> El juego de actores es inestable cuando todos los actores son muy influyentes
+                                  y muy dependientes, es decir ninguno tiene el poder.
+                                </p>
+                                  <p>
+                                      El indicador de estabilidad H varía entre 0 y 100% y se calcula a partir de
+                                      los valores de influencia y dependencia de MIDI entonces:<br>
+                                      <i class="fa fa-check"></i> Si H ≅ 0%, es inestable, pues los actores son a la vez muy influyentes y muy dependientes.<br>
+                                      <i class="fa fa-check"></i> Si H ≅ 100% es estable, ya que los actores o son muy influyentes o muy dependientes.
+                                  </p>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                </div>
+                <!-- /.box-body -->
+              </div>
+        {% endif %}
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+

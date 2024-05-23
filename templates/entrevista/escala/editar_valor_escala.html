@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if valorEscala.idEstudio.estado and usuario == 'COORDINADOR' %}
+        <div class="matter">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                            <div class="widget-head">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">Editar alternativa de respuesta</h3>
+                                </div>
+                            </div>
+                            <div class="widget-content">
+                                <div class="padd">
+										<hr/>
+
+                                    {% include 'messages.html' %}
+
+                                    {% if rondas_activas == 0 %}
+										<!-- Form starts.  -->
+                                        <form class="form-horizontal" role="form" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{form.nombre.errors}}
+                                                    <label class="control-label" style="text-align: left">Nombre alternativa*</label>
+                                                    {% if juicios == 0 %}
+                                                        <input class="form-control" type="text" name="nombre" value="{{ form.nombre.value }}">
+                                                    {% else %}
+                                                        <input class="form-control" title="No es posible editar este campo porque se han realizado juicios" readonly type="text" name="nombre" value="{{ form.nombre.value }}">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{form.valor.errors}}
+                                                    <label class="control-label" style="text-align: left">Valor*</label>
+                                                    {% if juicios == 0 %}
+                                                        <select name="valor" class="form-control" required>
+                                                            {% for valor in valores %}
+                                                                {% if valor == valorEscala.valor %}
+                                                                    <option selected value="{{valor}}">{{valor}}</option>
+                                                                {% else %}
+                                                                    <option value="{{valor}}">{{valor}}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    {% else %}
+                                                        <input class="form-control" title="No es posible editar este campo porque se han realizado juicios" readonly type="text" name="valor" value="{{ form.valor.value }}">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    {{form.estado.errors}}
+                                                    <label style="text-align: left"  class="control-label">Estado</label>
+                                                    {{form.estado}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8 col-md-offset-1">
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Descripción</label>
+                                                    {% if juicios == 0 %}
+                                                        <textarea class="form-control" rows="2" name="descripcion">{{ form.descripcion.value }}</textarea>
+                                                    {% else %}
+                                                        <textarea class="form-control" title="No es posible editar este campo porque se han realizado juicios" readonly rows="2" name="descripcion">{{ form.descripcion.value }}</textarea>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div  class="row">
+                                            <div class="col-md-3 col-md-offset-1" hidden>
+                                                <div class="form-group">
+                                                    <label class="control-label" style="text-align: left">Estudio</label>
+                                                    <input class="form-control" type="text" value="{{valorEscala.idEstudio.id}}" name="idEstudio">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-8 col-md-offset-3">
+                                            <a class="btn btn-success" href="{% url 'entrevista:escala' valorEscala.idEstudio.id %}" title="Escala de Likert"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                            <button type="submit" class="btn btn-primary" title="Guardar"><i class="fa fa-save"></i> Guardar</button>
+                                        </div>
+                                    </div>
+
+                                    </form>
+                                    {% else %}
+                                        <h3>La escala de Likert no puede ser editada si existe una ronda en desarrollo.</h3>
+                                        <br>
+                                        <br>
+                                        <div class="form-group">
+                                            <div class="col-md-8 col-md-offset-3">
+                                                <a class="btn btn-success" href="{% url 'entrevista:escala' valorEscala.idEstudio.id %}"><i class="fa fa-arrow-left"></i> Atrás</a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+</div>
+    {% else %}
+        <h2>No cuenta con permisos para acceder a esta página.</h2>
+    {% endif %}
+
+{% endblock %}
+
+
